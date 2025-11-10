@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useWindowDimensions, Platform } from "react-native";
-import { spacing, radius, fonts } from "../../src/theme";
+import { spacing, radius, fonts } from "../theme";
 
 export function useResponsiveValues() {
   const { width } = useWindowDimensions();

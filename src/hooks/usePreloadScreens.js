@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { router } from "expo-router";
+import { router, useRootNavigationState } from "expo-router";
 
 const noop = () => {};
 
@@ -20,6 +20,9 @@ function normalizeRoute(route) {
 }
 
 export function usePreloadScreens(routes) {
+  const navigationState = useRootNavigationState();
+  const isNavigationReady = Boolean(navigationState?.key);
+
   const normalizedRoutes = useMemo(() => {
     if (!Array.isArray(routes)) {
       return [];
@@ -31,7 +34,7 @@ export function usePreloadScreens(routes) {
   }, [routes]);
 
   useEffect(() => {
-    if (normalizedRoutes.length === 0) {
+    if (!isNavigationReady || normalizedRoutes.length === 0) {
       return noop;
     }
 
@@ -58,5 +61,5 @@ export function usePreloadScreens(routes) {
     return () => {
       cancelled = true;
     };
-  }, [normalizedRoutes]);
+  }, [isNavigationReady, normalizedRoutes]);
 }
