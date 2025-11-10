@@ -41,6 +41,7 @@ export default function CustomDrawerContent(props) {
       </View>
 
       <GroupTitle>פורומים</GroupTitle>
+      <Item icon="plus-circle" label="פוסט חדש" onPress={handleNavigate("post/create")} />
       <Item icon="message-reply-text-outline" label="יש לי מה לומר" onPress={navigateToCategory("opinion", "יש לי מה לומר")} />
       <Item icon="file-document-outline" label="גילוי מסמכים" onPress={navigateToCategory("documents", "גילוי מסמכים")} />
       <Item icon="scale-balance" label="משפטים" onPress={navigateToCategory("law", "משפטים")} />
