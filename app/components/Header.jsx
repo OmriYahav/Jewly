@@ -1,5 +1,6 @@
 import { useCallback } from "react";
-import { SafeAreaView, View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors, spacing, fonts, radius } from "../../src/theme";
@@ -32,7 +33,7 @@ export default function Header({ title, subtitle, onSearchPress }) {
   }, [onSearchPress]);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
       <View style={styles.headerRow}>
         <IconButton name="menu" onPress={handleOpenDrawer} accessibilityLabel="פתיחת תפריט" />
         <View style={styles.titleBlock}>

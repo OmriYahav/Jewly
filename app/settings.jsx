@@ -3,7 +3,7 @@ import { ScrollView, View, Text, TouchableOpacity, Switch } from "react-native";
 import Slider from "@react-native-community/slider";
 import Header from "./components/Header";
 import ScreenContainer from "./components/layout/ScreenContainer";
-import { useResponsiveValues } from "./hooks/useResponsiveValues";
+import { useResponsiveValues } from "../src/hooks/useResponsiveValues";
 import { colors, spacing, radius } from "../src/theme";
 
 const themeOptions = [

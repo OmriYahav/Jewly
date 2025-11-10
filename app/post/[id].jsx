@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import Header from "../components/Header";
 import ScreenContainer from "../components/layout/ScreenContainer";
 import { posts, comments as commentsMap } from "../../data/posts";
-import { useResponsiveValues } from "../hooks/useResponsiveValues";
+import { useResponsiveValues } from "../../src/hooks/useResponsiveValues";
 import { colors, spacing, radius } from "../../src/theme";
 
 export default function PostScreen() {

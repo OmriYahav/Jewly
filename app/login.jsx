@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform
 import { useRouter } from "expo-router";
 import Header from "./components/Header";
 import ScreenContainer from "./components/layout/ScreenContainer";
-import { useResponsiveValues } from "./hooks/useResponsiveValues";
+import { useResponsiveValues } from "../src/hooks/useResponsiveValues";
 import { colors, spacing, radius } from "../src/theme";
 
 export default function LoginScreen() {

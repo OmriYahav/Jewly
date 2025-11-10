@@ -5,7 +5,7 @@ import Header from "./components/Header";
 import ThreadCard from "./components/ThreadCard";
 import ScreenContainer from "./components/layout/ScreenContainer";
 import { posts, forumCategories } from "../data/posts";
-import { usePreloadScreens } from "./hooks/usePreloadScreens";
+import { usePreloadScreens } from "../src/hooks/usePreloadScreens";
 import { spacing } from "../src/theme";
 
 const PRELOAD_ROUTES = [
