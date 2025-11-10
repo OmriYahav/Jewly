@@ -1,20 +1,14 @@
-import { useState } from "react";
-import {
-  SafeAreaView,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  StatusBar,
-} from "react-native";
+import { useCallback, useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
+import { useRouter } from "expo-router";
 import Header from "./components/Header";
+import ScreenContainer from "./components/layout/ScreenContainer";
 import { useResponsiveValues } from "./hooks/useResponsiveValues";
 
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
   const {
     containerPadding,
     cardPadding,
@@ -26,9 +20,12 @@ export default function LoginScreen() {
     cardSpacing,
   } = useResponsiveValues();
 
+  const handleSubmit = useCallback(() => {
+    router.push("/");
+  }, [router]);
+
   return (
-    <SafeAreaView className="flex-1 bg-background">
-      <StatusBar barStyle="light-content" backgroundColor="#0C0F14" />
+    <ScreenContainer>
       <Header title="התחברות" subtitle="הזן פרטי משתמש" />
       <KeyboardAvoidingView
         className="flex-1"
@@ -75,6 +72,8 @@ export default function LoginScreen() {
               className="bg-accent rounded-full"
               style={{ paddingVertical: buttonPaddingVertical, marginTop: cardSpacing * 1.5 }}
               activeOpacity={0.85}
+              onPress={handleSubmit}
+              accessibilityRole="button"
             >
               <Text
                 className="text-background text-center font-semibold"
@@ -92,6 +91,6 @@ export default function LoginScreen() {
           </View>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }

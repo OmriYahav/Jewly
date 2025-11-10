@@ -1,7 +1,9 @@
+import { useCallback } from "react";
 import { SafeAreaView, View, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useResponsiveValues } from "../hooks/useResponsiveValues";
+import { COLORS } from "../constants/theme";
 
 export default function Header({ title, subtitle }) {
   const navigation = useNavigation();
@@ -13,6 +15,12 @@ export default function Header({ title, subtitle }) {
     subtitleFontSize,
     isTablet,
   } = useResponsiveValues();
+
+  const handleOpenDrawer = useCallback(() => {
+    if (navigation?.openDrawer) {
+      navigation.openDrawer();
+    }
+  }, [navigation]);
 
   return (
     <SafeAreaView
@@ -43,10 +51,11 @@ export default function Header({ title, subtitle }) {
         <TouchableOpacity
           className="bg-surface border border-border rounded-full"
           style={{ padding: isTablet ? 14 : 12 }}
-          onPress={() => navigation.openDrawer()}
+          onPress={handleOpenDrawer}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           accessibilityLabel="פתיחת תפריט"
         >
-          <Ionicons name="menu" size={20} color="#E5E8EF" />
+          <Ionicons name="menu" size={20} color={COLORS.text} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
