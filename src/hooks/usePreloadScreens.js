@@ -21,7 +21,12 @@ function normalizeRoute(route) {
 
 export function usePreloadScreens(routes) {
   const navigationState = useRootNavigationState();
-  const isNavigationReady = Boolean(navigationState?.key);
+  const isNavigationReady = Boolean(
+    navigationState?.key &&
+      typeof navigationState?.index === "number" &&
+      Array.isArray(navigationState?.routes) &&
+      navigationState.routes.length > 0
+  );
 
   const normalizedRoutes = useMemo(() => {
     if (!Array.isArray(routes)) {
