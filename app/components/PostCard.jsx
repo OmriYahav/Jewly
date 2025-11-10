@@ -1,9 +1,11 @@
+import { memo } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useResponsiveValues } from "../hooks/useResponsiveValues";
+import { COLORS } from "../constants/theme";
 
-export default function PostCard({ post }) {
+function PostCard({ post }) {
   const {
     cardPadding,
     cardRadius,
@@ -26,6 +28,7 @@ export default function PostCard({ post }) {
           marginBottom: cardSpacing,
         }}
         activeOpacity={0.8}
+        accessibilityRole="button"
       >
         <View
           className="flex-row-reverse justify-between items-center"
@@ -54,7 +57,7 @@ export default function PostCard({ post }) {
           style={{ gap: cardSpacing / 1.6 }}
         >
           <View className="flex-row-reverse items-center" style={{ gap: 4 }}>
-            <Ionicons name="eye-outline" size={16} color="#2A9DF4" />
+            <Ionicons name="eye-outline" size={16} color={COLORS.accent} />
             <Text
               className="text-text/70"
               style={{ fontSize: smallFontSize }}
@@ -63,7 +66,7 @@ export default function PostCard({ post }) {
             </Text>
           </View>
           <View className="flex-row-reverse items-center" style={{ gap: 4 }}>
-            <Ionicons name="chatbubble-ellipses-outline" size={16} color="#2A9DF4" />
+            <Ionicons name="chatbubble-ellipses-outline" size={16} color={COLORS.accent} />
             <Text
               className="text-text/70"
               style={{ fontSize: smallFontSize }}
@@ -76,3 +79,5 @@ export default function PostCard({ post }) {
     </Link>
   );
 }
+
+export default memo(PostCard);

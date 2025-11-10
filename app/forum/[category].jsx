@@ -1,19 +1,34 @@
-import { SafeAreaView, View, FlatList, Text, StatusBar } from "react-native";
+import { useCallback, useMemo } from "react";
+import { View, FlatList, Text } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import Header from "../components/Header";
 import PostCard from "../components/PostCard";
+import ScreenContainer from "../components/layout/ScreenContainer";
 import { posts, forumCategories } from "../../data/posts";
 import { useResponsiveValues } from "../hooks/useResponsiveValues";
 
 export default function ForumCategoryScreen() {
   const { category } = useLocalSearchParams();
-  const forum = forumCategories.find((item) => item.key === category);
-  const filteredPosts = posts.filter((item) => item.category === category);
+  const normalizedCategory = Array.isArray(category) ? category[0] : category;
+  const forum = useMemo(
+    () => forumCategories.find((item) => item.key === normalizedCategory),
+    [normalizedCategory]
+  );
+  const filteredPosts = useMemo(
+    () => posts.filter((item) => item.category === normalizedCategory),
+    [normalizedCategory]
+  );
   const { containerPadding, cardSpacing, metaFontSize } = useResponsiveValues();
+  const listPadding = useMemo(
+    () => ({ paddingBottom: cardSpacing * 5 }),
+    [cardSpacing]
+  );
+
+  const keyExtractor = useCallback((item) => item.id, []);
+  const renderPost = useCallback(({ item }) => <PostCard post={item} />, []);
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
-      <StatusBar barStyle="light-content" backgroundColor="#0C0F14" />
+    <ScreenContainer>
       <Header title={forum?.label ?? "פורום"} subtitle="הדיונים החמים ביותר" />
       <View
         className="flex-1"
@@ -31,13 +46,17 @@ export default function ForumCategoryScreen() {
         ) : (
           <FlatList
             data={filteredPosts}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <PostCard post={item} />}
-            contentContainerStyle={{ paddingBottom: cardSpacing * 5 }}
+            keyExtractor={keyExtractor}
+            renderItem={renderPost}
+            initialNumToRender={6}
+            maxToRenderPerBatch={8}
+            windowSize={4}
+            removeClippedSubviews
+            contentContainerStyle={listPadding}
             showsVerticalScrollIndicator={false}
           />
         )}
       </View>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }

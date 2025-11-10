@@ -1,13 +1,17 @@
-import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, StatusBar } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useCallback, useMemo } from "react";
+import { ScrollView, View, Text, TouchableOpacity } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import Header from "../components/Header";
+import ScreenContainer from "../components/layout/ScreenContainer";
 import { posts, comments as commentsMap } from "../../data/posts";
 import { useResponsiveValues } from "../hooks/useResponsiveValues";
 
 export default function PostScreen() {
   const { id } = useLocalSearchParams();
-  const post = posts.find((item) => item.id === id);
-  const comments = commentsMap[id] ?? [];
+  const router = useRouter();
+  const normalizedId = Array.isArray(id) ? id[0] : id;
+  const post = useMemo(() => posts.find((item) => item.id === normalizedId), [normalizedId]);
+  const comments = useMemo(() => commentsMap[normalizedId] ?? [], [normalizedId]);
   const {
     containerPadding,
     cardPadding,
@@ -21,9 +25,12 @@ export default function PostScreen() {
     smallFontSize,
   } = useResponsiveValues();
 
+  const handleReplyPress = useCallback(() => {
+    router.push("/login");
+  }, [router]);
+
   return (
-    <SafeAreaView className="flex-1 bg-background">
-      <StatusBar barStyle="light-content" backgroundColor="#0C0F14" />
+    <ScreenContainer>
       <Header title={post?.title ?? "פוסט"} subtitle={`מאת ${post?.author ?? "משתמש"}`} />
       <ScrollView
         className="flex-1"
@@ -99,6 +106,8 @@ export default function PostScreen() {
           className="bg-accent rounded-full"
           style={{ paddingVertical: buttonPaddingVertical }}
           activeOpacity={0.9}
+          onPress={handleReplyPress}
+          accessibilityRole="button"
         >
           <Text
             className="text-background text-center font-semibold"
@@ -108,6 +117,6 @@ export default function PostScreen() {
           </Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }

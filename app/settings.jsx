@@ -1,15 +1,8 @@
-import { useState } from "react";
-import {
-  SafeAreaView,
-  ScrollView,
-  View,
-  Text,
-  TouchableOpacity,
-  Switch,
-  StatusBar,
-} from "react-native";
+import { useCallback, useMemo, useState } from "react";
+import { ScrollView, View, Text, TouchableOpacity, Switch } from "react-native";
 import Slider from "@react-native-community/slider";
 import Header from "./components/Header";
+import ScreenContainer from "./components/layout/ScreenContainer";
 import { useResponsiveValues } from "./hooks/useResponsiveValues";
 
 const accentColor = "#2A9DF4";
@@ -37,9 +30,32 @@ export default function SettingsScreen() {
     isTablet,
   } = useResponsiveValues();
 
+  const themedOptions = useMemo(
+    () =>
+      themeOptions.map((option) => ({
+        ...option,
+        isSelected: selectedColor === option.value,
+      })),
+    [selectedColor]
+  );
+
+  const createSelectColorHandler = useCallback(
+    (value) => () => setSelectedColor(value),
+    []
+  );
+
+  const handleToggleNotifications = useCallback(
+    (value) => setNotificationsEnabled(value),
+    []
+  );
+
+  const handleToggleComments = useCallback(
+    (value) => setCommentNotifications(value),
+    []
+  );
+
   return (
-    <SafeAreaView className="flex-1 bg-background">
-      <StatusBar barStyle="light-content" backgroundColor="#0C0F14" />
+    <ScreenContainer>
       <Header title="הגדרות" subtitle="התאמה אישית של החוויה" />
       <ScrollView
         className="flex-1"
@@ -57,16 +73,17 @@ export default function SettingsScreen() {
             ערכת נושא
           </Text>
           <View className="flex-row-reverse" style={{ gap: cardSpacing }}>
-            {themeOptions.map((option) => (
+            {themedOptions.map((option) => (
               <TouchableOpacity
                 key={option.value}
-                onPress={() => setSelectedColor(option.value)}
-                className={`flex-1 border rounded-2xl ${selectedColor === option.value ? "border-accent" : "border-border"}`}
+                onPress={createSelectColorHandler(option.value)}
+                className={`flex-1 border rounded-2xl ${option.isSelected ? "border-accent" : "border-border"}`}
                 style={{
-                  backgroundColor: selectedColor === option.value ? "rgba(42, 157, 244, 0.15)" : "transparent",
+                  backgroundColor: option.isSelected ? "rgba(42, 157, 244, 0.15)" : "transparent",
                   paddingVertical: buttonPaddingVertical - 2,
                   paddingHorizontal: isTablet ? 18 : 12,
                 }}
+                accessibilityRole="button"
               >
                 <View className="flex-row-reverse items-center justify-between">
                   <Text className="text-text" style={{ fontSize: bodyFontSize }}>
@@ -133,7 +150,7 @@ export default function SettingsScreen() {
             </View>
             <Switch
               value={notificationsEnabled}
-              onValueChange={setNotificationsEnabled}
+              onValueChange={handleToggleNotifications}
               thumbColor={notificationsEnabled ? accentColor : "#1F2531"}
               trackColor={{ false: "#2F3541", true: "rgba(42, 157, 244, 0.35)" }}
             />
@@ -149,13 +166,13 @@ export default function SettingsScreen() {
             </View>
             <Switch
               value={commentNotifications}
-              onValueChange={setCommentNotifications}
+              onValueChange={handleToggleComments}
               thumbColor={commentNotifications ? accentColor : "#1F2531"}
               trackColor={{ false: "#2F3541", true: "rgba(42, 157, 244, 0.35)" }}
             />
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }
