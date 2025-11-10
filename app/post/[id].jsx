@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import ScreenContainer from "../components/layout/ScreenContainer";
 import { posts, comments as commentsMap } from "../../data/posts";
 import { useResponsiveValues } from "../hooks/useResponsiveValues";
+import { colors, spacing, radius } from "../../src/theme";
 
 export default function PostScreen() {
   const { id } = useLocalSearchParams();
@@ -33,35 +34,58 @@ export default function PostScreen() {
     <ScreenContainer>
       <Header title={post?.title ?? "פוסט"} subtitle={`מאת ${post?.author ?? "משתמש"}`} />
       <ScrollView
-        className="flex-1"
-        style={{ paddingHorizontal: containerPadding }}
+        style={{ flex: 1, paddingHorizontal: containerPadding }}
         contentContainerStyle={{ paddingBottom: cardSpacing * 6 }}
+        showsVerticalScrollIndicator={false}
       >
         <View
-          className="bg-surface border border-border"
-          style={{ borderRadius: cardRadius, padding: cardPadding, marginBottom: cardSpacing * 1.5 }}
+          style={{
+            backgroundColor: colors.card,
+            borderRadius: cardRadius,
+            padding: cardPadding,
+            marginBottom: cardSpacing * 1.5,
+            borderWidth: 1,
+            borderColor: colors.divider,
+          }}
         >
           <Text
-            className="text-text text-right"
-            style={{ fontSize: bodyFontSize, lineHeight: bodyFontSize * 1.6 }}
+            style={{
+              color: colors.text,
+              fontSize: bodyFontSize,
+              lineHeight: bodyFontSize * 1.6,
+              textAlign: "right",
+            }}
           >
             {post?.content ?? "הפוסט לא נמצא."}
           </Text>
         </View>
         <Text
-          className="text-text font-semibold text-right"
-          style={{ fontSize: titleFontSize, marginBottom: cardSpacing }}
+          style={{
+            color: colors.text,
+            fontSize: titleFontSize,
+            fontWeight: "700",
+            marginBottom: cardSpacing,
+            textAlign: "right",
+          }}
         >
           תגובות
         </Text>
         {comments.length === 0 ? (
           <View
-            className="bg-surface border border-border"
-            style={{ borderRadius: cardRadius, padding: cardPadding }}
+            style={{
+              backgroundColor: colors.card,
+              borderRadius: cardRadius,
+              padding: cardPadding,
+              borderWidth: 1,
+              borderColor: colors.divider,
+            }}
           >
             <Text
-              className="text-text/70 text-right"
-              style={{ fontSize: metaFontSize }}
+              style={{
+                color: colors.textMuted,
+                fontSize: metaFontSize,
+                textAlign: "right",
+              }}
             >
               היו הראשונים להגיב לדיון הזה.
             </Text>
@@ -70,27 +94,44 @@ export default function PostScreen() {
           comments.map((comment) => (
             <View
               key={comment.id}
-              className="bg-surface border border-border"
               style={{
+                backgroundColor: colors.card,
                 borderRadius: cardRadius,
                 padding: cardPadding,
                 marginBottom: cardSpacing,
+                borderWidth: 1,
+                borderColor: colors.divider,
               }}
             >
-              <View className="flex-row-reverse justify-between items-center mb-2">
+              <View
+                style={{
+                  flexDirection: "row-reverse",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: spacing(0.5),
+                }}
+              >
                 <Text
-                  className="text-text font-medium text-right"
-                  style={{ fontSize: metaFontSize }}
+                  style={{
+                    color: colors.text,
+                    fontSize: metaFontSize,
+                    fontWeight: "600",
+                  }}
                 >
                   {comment.author}
                 </Text>
-                <Text className="text-text/60" style={{ fontSize: smallFontSize }}>
+                <Text style={{ color: colors.textMuted, fontSize: smallFontSize }}>
                   {comment.time}
                 </Text>
               </View>
               <Text
-                className="text-text/80 text-right"
-                style={{ fontSize: bodyFontSize - 1, lineHeight: (bodyFontSize - 1) * 1.5 }}
+                style={{
+                  color: colors.text,
+                  opacity: 0.85,
+                  fontSize: bodyFontSize - 1,
+                  lineHeight: (bodyFontSize - 1) * 1.5,
+                  textAlign: "right",
+                }}
               >
                 {comment.text}
               </Text>
@@ -99,19 +140,33 @@ export default function PostScreen() {
         )}
       </ScrollView>
       <View
-        className="absolute bottom-0 left-0 right-0"
-        style={{ paddingHorizontal: containerPadding, paddingBottom: cardSpacing * 1.5 }}
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          paddingHorizontal: containerPadding,
+          paddingBottom: cardSpacing * 1.5,
+        }}
+        pointerEvents="box-none"
       >
         <TouchableOpacity
-          className="bg-accent rounded-full"
-          style={{ paddingVertical: buttonPaddingVertical }}
+          style={{
+            backgroundColor: colors.brand,
+            borderRadius: radius.lg,
+            paddingVertical: buttonPaddingVertical,
+          }}
           activeOpacity={0.9}
           onPress={handleReplyPress}
           accessibilityRole="button"
         >
           <Text
-            className="text-background text-center font-semibold"
-            style={{ fontSize: buttonFontSize }}
+            style={{
+              color: colors.bg,
+              textAlign: "center",
+              fontSize: buttonFontSize,
+              fontWeight: "700",
+            }}
           >
             הגב לפוסט
           </Text>

@@ -1,14 +1,15 @@
 import { useCallback, useMemo } from "react";
 import { View, FlatList, Text } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import Header from "../components/Header";
-import PostCard from "../components/PostCard";
+import ThreadCard from "../components/ThreadCard";
 import ScreenContainer from "../components/layout/ScreenContainer";
 import { posts, forumCategories } from "../../data/posts";
-import { useResponsiveValues } from "../hooks/useResponsiveValues";
+import { spacing, colors, fonts } from "../../src/theme";
 
 export default function ForumCategoryScreen() {
   const { category } = useLocalSearchParams();
+  const router = useRouter();
   const normalizedCategory = Array.isArray(category) ? category[0] : category;
   const forum = useMemo(
     () => forumCategories.find((item) => item.key === normalizedCategory),
@@ -18,28 +19,47 @@ export default function ForumCategoryScreen() {
     () => posts.filter((item) => item.category === normalizedCategory),
     [normalizedCategory]
   );
-  const { containerPadding, cardSpacing, metaFontSize } = useResponsiveValues();
+
   const listPadding = useMemo(
-    () => ({ paddingBottom: cardSpacing * 5 }),
-    [cardSpacing]
+    () => ({
+      paddingHorizontal: spacing(2),
+      paddingTop: spacing(2),
+      paddingBottom: spacing(4),
+      direction: "rtl",
+    }),
+    []
+  );
+
+  const renderThread = useCallback(
+    ({ item }) => (
+      <ThreadCard
+        title={item.title}
+        author={item.author}
+        tagLabel={item.tag}
+        views={item.views}
+        comments={item.comments}
+        onPress={() => router.push({ pathname: "/post/[id]", params: { id: item.id } })}
+      />
+    ),
+    [router]
   );
 
   const keyExtractor = useCallback((item) => item.id, []);
-  const renderPost = useCallback(({ item }) => <PostCard post={item} />, []);
 
   return (
     <ScreenContainer>
       <Header title={forum?.label ?? "פורום"} subtitle="הדיונים החמים ביותר" />
-      <View
-        className="flex-1"
-        style={{ paddingHorizontal: containerPadding, paddingBottom: cardSpacing }}
-      >
+      <View style={{ flex: 1 }}>
         {filteredPosts.length === 0 ? (
-          <View className="flex-1 items-center justify-center">
-            <Text
-              className="text-text/60"
-              style={{ fontSize: metaFontSize }}
-            >
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "center",
+              paddingHorizontal: spacing(3),
+            }}
+          >
+            <Text style={{ color: colors.textMuted, fontSize: fonts.body, textAlign: "center" }}>
               אין פוסטים להצגה כרגע
             </Text>
           </View>
@@ -47,12 +67,12 @@ export default function ForumCategoryScreen() {
           <FlatList
             data={filteredPosts}
             keyExtractor={keyExtractor}
-            renderItem={renderPost}
+            renderItem={renderThread}
+            style={{ flex: 1 }}
+            contentContainerStyle={listPadding}
             initialNumToRender={6}
-            maxToRenderPerBatch={8}
             windowSize={4}
             removeClippedSubviews
-            contentContainerStyle={listPadding}
             showsVerticalScrollIndicator={false}
           />
         )}

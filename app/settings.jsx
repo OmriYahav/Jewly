@@ -4,11 +4,11 @@ import Slider from "@react-native-community/slider";
 import Header from "./components/Header";
 import ScreenContainer from "./components/layout/ScreenContainer";
 import { useResponsiveValues } from "./hooks/useResponsiveValues";
+import { colors, spacing, radius } from "../src/theme";
 
-const accentColor = "#2A9DF4";
 const themeOptions = [
-  { name: "כחול", value: "#2A9DF4" },
-  { name: "ירוק", value: "#2BC48A" },
+  { name: "כחול", value: colors.brand },
+  { name: "ירוק", value: colors.success },
   { name: "זהב", value: "#F4B942" },
 ];
 
@@ -58,38 +58,65 @@ export default function SettingsScreen() {
     <ScreenContainer>
       <Header title="הגדרות" subtitle="התאמה אישית של החוויה" />
       <ScrollView
-        className="flex-1"
-        style={{ paddingHorizontal: containerPadding }}
+        style={{ flex: 1, paddingHorizontal: containerPadding }}
         contentContainerStyle={{ paddingBottom: cardSpacing * 3 }}
+        showsVerticalScrollIndicator={false}
       >
         <View
-          className="bg-surface border border-border"
-          style={{ borderRadius: cardRadius, padding: cardPadding, marginBottom: cardSpacing * 1.5 }}
+          style={{
+            backgroundColor: colors.card,
+            borderRadius: cardRadius,
+            padding: cardPadding,
+            marginBottom: cardSpacing * 1.5,
+            borderWidth: 1,
+            borderColor: colors.divider,
+          }}
         >
           <Text
-            className="text-text font-semibold text-right"
-            style={{ fontSize: titleFontSize, marginBottom: cardSpacing / 1.5 }}
+            style={{
+              color: colors.text,
+              fontSize: titleFontSize,
+              marginBottom: cardSpacing / 1.5,
+              textAlign: "right",
+              fontWeight: "700",
+            }}
           >
             ערכת נושא
           </Text>
-          <View className="flex-row-reverse" style={{ gap: cardSpacing }}>
+          <View style={{ flexDirection: "row-reverse", gap: cardSpacing }}>
             {themedOptions.map((option) => (
               <TouchableOpacity
                 key={option.value}
                 onPress={createSelectColorHandler(option.value)}
-                className={`flex-1 border rounded-2xl ${option.isSelected ? "border-accent" : "border-border"}`}
                 style={{
-                  backgroundColor: option.isSelected ? "rgba(42, 157, 244, 0.15)" : "transparent",
+                  flex: 1,
+                  borderRadius: radius.md + 6,
+                  borderWidth: 1,
+                  borderColor: option.isSelected ? colors.brand : colors.divider,
+                  backgroundColor: option.isSelected ? "rgba(46, 124, 246, 0.15)" : "transparent",
                   paddingVertical: buttonPaddingVertical - 2,
-                  paddingHorizontal: isTablet ? 18 : 12,
+                  paddingHorizontal: isTablet ? spacing(2.5) : spacing(1.5),
                 }}
                 accessibilityRole="button"
               >
-                <View className="flex-row-reverse items-center justify-between">
-                  <Text className="text-text" style={{ fontSize: bodyFontSize }}>
+                <View
+                  style={{
+                    flexDirection: "row-reverse",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Text style={{ color: colors.text, fontSize: bodyFontSize }}>
                     {option.name}
                   </Text>
-                  <View style={{ backgroundColor: option.value, width: 18, height: 18, borderRadius: 9 }} />
+                  <View
+                    style={{
+                      backgroundColor: option.value,
+                      width: 18,
+                      height: 18,
+                      borderRadius: 9,
+                    }}
+                  />
                 </View>
               </TouchableOpacity>
             ))}
@@ -97,18 +124,33 @@ export default function SettingsScreen() {
         </View>
 
         <View
-          className="bg-surface border border-border"
-          style={{ borderRadius: cardRadius, padding: cardPadding, marginBottom: cardSpacing * 1.5 }}
+          style={{
+            backgroundColor: colors.card,
+            borderRadius: cardRadius,
+            padding: cardPadding,
+            marginBottom: cardSpacing * 1.5,
+            borderWidth: 1,
+            borderColor: colors.divider,
+          }}
         >
           <Text
-            className="text-text font-semibold text-right"
-            style={{ fontSize: titleFontSize, marginBottom: cardSpacing / 1.5 }}
+            style={{
+              color: colors.text,
+              fontSize: titleFontSize,
+              marginBottom: cardSpacing / 1.5,
+              textAlign: "right",
+              fontWeight: "700",
+            }}
           >
             גודל טקסט
           </Text>
           <Text
-            className="text-text/70 text-right"
-            style={{ fontSize: metaFontSize, marginBottom: cardSpacing / 2 }}
+            style={{
+              color: colors.textMuted,
+              fontSize: metaFontSize,
+              marginBottom: cardSpacing / 2,
+              textAlign: "right",
+            }}
           >
             התאם את גודל הכתב בפיד ובתגובות
           </Text>
@@ -116,59 +158,100 @@ export default function SettingsScreen() {
             value={fontSize}
             minimumValue={14}
             maximumValue={24}
-            onValueChange={(value) => setFontSize(value)}
-            minimumTrackTintColor={accentColor}
-            maximumTrackTintColor="#2F3541"
-            thumbTintColor={accentColor}
+            onValueChange={setFontSize}
+            minimumTrackTintColor={colors.brand}
+            maximumTrackTintColor={colors.divider}
+            thumbTintColor={colors.brand}
           />
           <Text
-            className="text-text text-right"
-            style={{ marginTop: cardSpacing / 2, fontSize: metaFontSize }}
+            style={{
+              color: colors.text,
+              marginTop: cardSpacing / 2,
+              fontSize: metaFontSize,
+              textAlign: "right",
+            }}
           >
             {Math.round(fontSize)}pt
           </Text>
         </View>
 
         <View
-          className="bg-surface border border-border"
-          style={{ borderRadius: cardRadius, padding: cardPadding }}
+          style={{
+            backgroundColor: colors.card,
+            borderRadius: cardRadius,
+            padding: cardPadding,
+            borderWidth: 1,
+            borderColor: colors.divider,
+          }}
         >
           <Text
-            className="text-text font-semibold text-right"
-            style={{ fontSize: titleFontSize, marginBottom: cardSpacing / 1.5 }}
+            style={{
+              color: colors.text,
+              fontSize: titleFontSize,
+              marginBottom: cardSpacing / 1.5,
+              textAlign: "right",
+              fontWeight: "700",
+            }}
           >
             התראות
           </Text>
-          <View className="flex-row-reverse items-center justify-between" style={{ marginBottom: cardSpacing }}>
-            <View className="flex-1 mr-4">
-              <Text className="text-text text-right" style={{ fontSize: bodyFontSize }}>
+          <View
+            style={{
+              flexDirection: "row-reverse",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: cardSpacing,
+            }}
+          >
+            <View style={{ flex: 1, marginRight: spacing(2) }}>
+              <Text style={{ color: colors.text, fontSize: bodyFontSize, textAlign: "right" }}>
                 התראות כלליות
               </Text>
-              <Text className="text-text/60 text-right mt-1" style={{ fontSize: smallFontSize }}>
+              <Text
+                style={{
+                  color: colors.textMuted,
+                  fontSize: smallFontSize,
+                  textAlign: "right",
+                  marginTop: spacing(0.5),
+                }}
+              >
                 קבל עדכון על פוסטים חדשים בנושאים שבחרת
               </Text>
             </View>
             <Switch
               value={notificationsEnabled}
               onValueChange={handleToggleNotifications}
-              thumbColor={notificationsEnabled ? accentColor : "#1F2531"}
-              trackColor={{ false: "#2F3541", true: "rgba(42, 157, 244, 0.35)" }}
+              thumbColor={notificationsEnabled ? colors.brand : colors.divider}
+              trackColor={{ false: "rgba(255,255,255,0.08)", true: "rgba(46,124,246,0.35)" }}
             />
           </View>
-          <View className="flex-row-reverse items-center justify-between">
-            <View className="flex-1 mr-4">
-              <Text className="text-text text-right" style={{ fontSize: bodyFontSize }}>
+          <View
+            style={{
+              flexDirection: "row-reverse",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <View style={{ flex: 1, marginRight: spacing(2) }}>
+              <Text style={{ color: colors.text, fontSize: bodyFontSize, textAlign: "right" }}>
                 התראות תגובות
               </Text>
-              <Text className="text-text/60 text-right mt-1" style={{ fontSize: smallFontSize }}>
+              <Text
+                style={{
+                  color: colors.textMuted,
+                  fontSize: smallFontSize,
+                  textAlign: "right",
+                  marginTop: spacing(0.5),
+                }}
+              >
                 קבל הודעה כאשר מגיבים לדיונים שלך
               </Text>
             </View>
             <Switch
               value={commentNotifications}
               onValueChange={handleToggleComments}
-              thumbColor={commentNotifications ? accentColor : "#1F2531"}
-              trackColor={{ false: "#2F3541", true: "rgba(42, 157, 244, 0.35)" }}
+              thumbColor={commentNotifications ? colors.brand : colors.divider}
+              trackColor={{ false: "rgba(255,255,255,0.08)", true: "rgba(46,124,246,0.35)" }}
             />
           </View>
         </View>

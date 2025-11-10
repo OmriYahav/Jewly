@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useWindowDimensions, Platform } from "react-native";
+import { spacing, radius, fonts } from "../../src/theme";
 
 export function useResponsiveValues() {
   const { width } = useWindowDimensions();
@@ -8,23 +9,23 @@ export function useResponsiveValues() {
     const isTablet = width >= 768;
     const isCompact = width <= 360;
 
-    const containerPadding = isTablet ? 32 : isCompact ? 16 : 24;
-    const cardPadding = isTablet ? 24 : isCompact ? 16 : 20;
-    const cardRadius = isTablet ? 28 : 24;
-    const cardSpacing = isTablet ? 24 : 16;
-    const titleFontSize = isTablet ? 28 : isCompact ? 22 : 24;
-    const subtitleFontSize = isTablet ? 16 : isCompact ? 13 : 14;
-    const bodyFontSize = isTablet ? 18 : isCompact ? 14 : 15;
-    const metaFontSize = isTablet ? 15 : isCompact ? 12 : 13;
-    const smallFontSize = isTablet ? 13 : isCompact ? 11 : 12;
-    const buttonPaddingVertical = isTablet ? 18 : 14;
-    const buttonFontSize = isTablet ? 17 : 15;
+    const containerPadding = isTablet ? spacing(3) : isCompact ? spacing(1.5) : spacing(2);
+    const cardPadding = isTablet ? spacing(3) : spacing(2);
+    const cardRadius = isTablet ? radius.lg + 6 : radius.lg;
+    const cardSpacing = spacing(2);
+    const titleFontSize = isTablet ? 26 : 22;
+    const subtitleFontSize = fonts.body;
+    const bodyFontSize = isTablet ? 18 : 16;
+    const metaFontSize = fonts.meta;
+    const smallFontSize = isCompact ? fonts.meta : fonts.meta + 1;
+    const buttonPaddingVertical = isTablet ? spacing(2.5) : spacing(2);
+    const buttonFontSize = isTablet ? 18 : 16;
     const headerTopPadding = Platform.select({
-      ios: isTablet ? 20 : 16,
-      android: isTablet ? 24 : 18,
-      default: 16,
+      ios: isTablet ? spacing(3) : spacing(2),
+      android: isTablet ? spacing(3) : spacing(2),
+      default: spacing(2),
     });
-    const headerBottomPadding = isTablet ? 20 : 16;
+    const headerBottomPadding = spacing(1.5);
 
     return {
       isTablet,

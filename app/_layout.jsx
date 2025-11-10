@@ -2,14 +2,15 @@ import "react-native-gesture-handler";
 import "../global.css";
 
 import { useEffect } from "react";
-import { I18nManager, Platform } from "react-native";
+import { I18nManager, Platform, useWindowDimensions } from "react-native";
 import { Drawer } from "expo-router/drawer";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as Updates from "expo-updates";
-import DrawerContent from "./navigation/DrawerContent";
-import { COLORS, DRAWER } from "./constants/theme";
+import CustomDrawerContent from "./navigation/CustomDrawerContent";
+import { colors } from "../src/theme";
 
 export default function RootLayout() {
+  const { width } = useWindowDimensions();
   useEffect(() => {
     if (Platform.OS === "web" || I18nManager.isRTL) {
       return;
@@ -24,24 +25,26 @@ export default function RootLayout() {
     }
   }, []);
 
+  const drawerWidth = Math.min(width * 0.8, 380);
+
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: COLORS.background }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg }}>
       <Drawer
         screenOptions={{
           headerShown: false,
           drawerPosition: "right",
-          drawerType: "slide",
-          swipeEdgeWidth: DRAWER.swipeEdgeWidth,
+          drawerType: "front",
+          swipeEdgeWidth: 120,
           sceneContainerStyle: {
-            backgroundColor: COLORS.background,
+            backgroundColor: colors.bg,
           },
-          overlayColor: COLORS.overlay,
+          overlayColor: "rgba(0,0,0,0.45)",
           drawerStyle: {
-            backgroundColor: COLORS.background,
-            width: DRAWER.width,
+            backgroundColor: colors.bg,
+            width: drawerWidth,
           },
         }}
-        drawerContent={(props) => <DrawerContent {...props} />}
+        drawerContent={(props) => <CustomDrawerContent {...props} />}
       >
         <Drawer.Screen
           name="index"

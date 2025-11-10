@@ -3,6 +3,7 @@ export const forumCategories = [
   { key: "media", label: "ביקורת תקשורת" },
   { key: "politics", label: "פוליטיקה ואקטואליה" },
   { key: "opinion", label: "יש לי מה לומר" },
+  { key: "documents", label: "גילוי מסמכים" },
   { key: "torah", label: "בית המדרש" },
   { key: "law", label: "משפטים" }
 ];
@@ -13,6 +14,7 @@ export const posts = [
     category: "scoops",
     title: "דיווח מיוחד: עדכון חשוב מהשטח",
     author: "rotter1",
+    tag: "דיווח מיוחד",
     views: 18234,
     comments: 162,
     time: "לפני שעה",

@@ -1,11 +1,12 @@
 import { useCallback, useMemo } from "react";
-import { View, FlatList } from "react-native";
+import { FlatList } from "react-native";
+import { useRouter } from "expo-router";
 import Header from "./components/Header";
-import PostCard from "./components/PostCard";
+import ThreadCard from "./components/ThreadCard";
 import ScreenContainer from "./components/layout/ScreenContainer";
 import { posts, forumCategories } from "../data/posts";
-import { useResponsiveValues } from "./hooks/useResponsiveValues";
 import { usePreloadScreens } from "./hooks/usePreloadScreens";
+import { spacing } from "../src/theme";
 
 const PRELOAD_ROUTES = [
   "/settings",
@@ -21,36 +22,55 @@ const PRELOAD_ROUTES = [
 ];
 
 export default function HomeScreen() {
-  const { containerPadding, cardSpacing } = useResponsiveValues();
-  const listContentPadding = useMemo(
-    () => ({ paddingBottom: cardSpacing * 5 }),
-    [cardSpacing]
+  const router = useRouter();
+  const contentPadding = useMemo(
+    () => ({
+      paddingHorizontal: spacing(2),
+      paddingTop: spacing(2),
+      paddingBottom: spacing(4),
+    }),
+    []
   );
-
-  const keyExtractor = useCallback((item) => item.id, []);
-  const renderPost = useCallback(({ item }) => <PostCard post={item} />, []);
 
   usePreloadScreens(PRELOAD_ROUTES);
 
+  const handleNavigateToThread = useCallback(
+    (id) => () => {
+      router.push({ pathname: "/post/[id]", params: { id } });
+    },
+    [router]
+  );
+
+  const renderThread = useCallback(
+    ({ item }) => (
+      <ThreadCard
+        title={item.title}
+        author={item.author}
+        tagLabel={item.tag}
+        views={item.views}
+        comments={item.comments}
+        onPress={handleNavigateToThread(item.id)}
+      />
+    ),
+    [handleNavigateToThread]
+  );
+
+  const keyExtractor = useCallback((item) => item.id, []);
+
   return (
     <ScreenContainer>
-      <Header title="רוטר.נט" subtitle="פורום חדשות ודיונים" />
-      <View
-        className="flex-1"
-        style={{ paddingHorizontal: containerPadding, paddingBottom: cardSpacing }}
-      >
-        <FlatList
-          data={posts}
-          keyExtractor={keyExtractor}
-          renderItem={renderPost}
-          initialNumToRender={6}
-          maxToRenderPerBatch={8}
-          windowSize={5}
-          removeClippedSubviews
-          contentContainerStyle={listContentPadding}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
+      <Header title="רוֹטר.נט – סקופים" subtitle="פורום חדשות ודיונים" />
+      <FlatList
+        data={posts}
+        keyExtractor={keyExtractor}
+        renderItem={renderThread}
+        style={{ flex: 1 }}
+        contentContainerStyle={contentPadding}
+        initialNumToRender={6}
+        windowSize={5}
+        removeClippedSubviews
+        showsVerticalScrollIndicator={false}
+      />
     </ScreenContainer>
   );
 }

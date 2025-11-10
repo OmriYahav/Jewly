@@ -1,14 +1,14 @@
 import { memo } from "react";
 import { SafeAreaView, StatusBar } from "react-native";
-import { COLORS } from "../../constants/theme";
+import { colors } from "../../../src/theme";
 
 const ScreenContainer = memo(function ScreenContainer({ children, style, statusBarStyle = "light-content" }) {
   return (
     <SafeAreaView
       className="flex-1"
-      style={[{ backgroundColor: COLORS.background }, style]}
+      style={[{ backgroundColor: colors.bg }, style]}
     >
-      <StatusBar barStyle={statusBarStyle} backgroundColor={COLORS.background} />
+      <StatusBar barStyle={statusBarStyle} backgroundColor={colors.bg} />
       {children}
     </SafeAreaView>
   );

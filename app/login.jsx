@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import Header from "./components/Header";
 import ScreenContainer from "./components/layout/ScreenContainer";
 import { useResponsiveValues } from "./hooks/useResponsiveValues";
+import { colors, spacing, radius } from "../src/theme";
 
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
@@ -28,63 +29,109 @@ export default function LoginScreen() {
     <ScreenContainer>
       <Header title="התחברות" subtitle="הזן פרטי משתמש" />
       <KeyboardAvoidingView
-        className="flex-1"
+        style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 24}
       >
         <View
-          className="flex-1"
-          style={{ paddingHorizontal: containerPadding, paddingTop: cardSpacing * 1.5 }}
+          style={{ paddingHorizontal: containerPadding, paddingTop: cardSpacing * 1.5, flex: 1 }}
         >
           <View
-            className="bg-surface border border-border"
-            style={{ borderRadius: cardRadius, padding: cardPadding }}
+            style={{
+              backgroundColor: colors.card,
+              borderRadius: cardRadius,
+              padding: cardPadding,
+              borderWidth: 1,
+              borderColor: colors.divider,
+            }}
           >
-            <Text className="text-text text-right" style={{ fontSize: bodyFontSize, marginBottom: cardSpacing / 2 }}>
+            <Text
+              style={{
+                color: colors.text,
+                fontSize: bodyFontSize,
+                marginBottom: cardSpacing / 2,
+                textAlign: "right",
+                fontWeight: "600",
+              }}
+            >
               שם משתמש
             </Text>
             <TextInput
-              className="bg-background/60 text-text border border-border text-right"
-              style={{ borderRadius: cardRadius - 6, paddingHorizontal: 16, paddingVertical: 12, fontSize: bodyFontSize }}
+              style={{
+                backgroundColor: colors.bg,
+                color: colors.text,
+                borderRadius: cardRadius - 6,
+                paddingHorizontal: spacing(2),
+                paddingVertical: spacing(1.5),
+                fontSize: bodyFontSize,
+                borderWidth: 1,
+                borderColor: colors.divider,
+                textAlign: "right",
+              }}
               placeholder="הקלד שם משתמש"
-              placeholderTextColor="rgba(229, 232, 239, 0.4)"
+              placeholderTextColor="rgba(232, 238, 242, 0.4)"
               value={username}
               onChangeText={setUsername}
-              textAlign="right"
             />
             <Text
-              className="text-text text-right"
-              style={{ fontSize: bodyFontSize, marginTop: cardSpacing, marginBottom: cardSpacing / 2 }}
+              style={{
+                color: colors.text,
+                fontSize: bodyFontSize,
+                marginTop: cardSpacing,
+                marginBottom: cardSpacing / 2,
+                textAlign: "right",
+                fontWeight: "600",
+              }}
             >
               סיסמה
             </Text>
             <TextInput
-              className="bg-background/60 text-text border border-border text-right"
-              style={{ borderRadius: cardRadius - 6, paddingHorizontal: 16, paddingVertical: 12, fontSize: bodyFontSize }}
+              style={{
+                backgroundColor: colors.bg,
+                color: colors.text,
+                borderRadius: cardRadius - 6,
+                paddingHorizontal: spacing(2),
+                paddingVertical: spacing(1.5),
+                fontSize: bodyFontSize,
+                borderWidth: 1,
+                borderColor: colors.divider,
+                textAlign: "right",
+              }}
               placeholder="הקלד סיסמה"
-              placeholderTextColor="rgba(229, 232, 239, 0.4)"
+              placeholderTextColor="rgba(232, 238, 242, 0.4)"
               secureTextEntry
               value={password}
               onChangeText={setPassword}
-              textAlign="right"
             />
             <TouchableOpacity
-              className="bg-accent rounded-full"
-              style={{ paddingVertical: buttonPaddingVertical, marginTop: cardSpacing * 1.5 }}
+              style={{
+                backgroundColor: colors.brand,
+                borderRadius: radius.lg,
+                paddingVertical: buttonPaddingVertical,
+                marginTop: cardSpacing * 1.5,
+              }}
               activeOpacity={0.85}
               onPress={handleSubmit}
               accessibilityRole="button"
             >
               <Text
-                className="text-background text-center font-semibold"
-                style={{ fontSize: buttonFontSize }}
+                style={{
+                  color: colors.bg,
+                  textAlign: "center",
+                  fontSize: buttonFontSize,
+                  fontWeight: "700",
+                }}
               >
                 התחברות
               </Text>
             </TouchableOpacity>
             <Text
-              className="text-text/60 text-right"
-              style={{ fontSize: metaFontSize, marginTop: cardSpacing }}
+              style={{
+                color: colors.textMuted,
+                fontSize: metaFontSize,
+                marginTop: cardSpacing,
+                textAlign: "right",
+              }}
             >
               פרטי ההתחברות לשימוש הדגמה בלבד.
             </Text>

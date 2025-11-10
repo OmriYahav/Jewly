@@ -1,20 +1,23 @@
 import { useCallback } from "react";
-import { SafeAreaView, View, Text, TouchableOpacity } from "react-native";
+import { SafeAreaView, View, Text, Pressable, StyleSheet } from "react-native";
 import { useNavigation } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
-import { useResponsiveValues } from "../hooks/useResponsiveValues";
-import { COLORS } from "../constants/theme";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { colors, spacing, fonts, radius } from "../../src/theme";
 
-export default function Header({ title, subtitle }) {
+const IconButton = ({ name, onPress, accessibilityLabel }) => (
+  <Pressable
+    onPress={onPress}
+    accessibilityRole="button"
+    accessibilityLabel={accessibilityLabel}
+    style={({ pressed }) => [styles.iconButton, pressed && styles.iconButtonPressed]}
+    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+  >
+    <MaterialCommunityIcons name={name} size={22} color={colors.text} />
+  </Pressable>
+);
+
+export default function Header({ title, subtitle, onSearchPress }) {
   const navigation = useNavigation();
-  const {
-    containerPadding,
-    headerTopPadding,
-    headerBottomPadding,
-    titleFontSize,
-    subtitleFontSize,
-    isTablet,
-  } = useResponsiveValues();
 
   const handleOpenDrawer = useCallback(() => {
     if (navigation?.openDrawer) {
@@ -22,42 +25,72 @@ export default function Header({ title, subtitle }) {
     }
   }, [navigation]);
 
+  const handleSearch = useCallback(() => {
+    if (typeof onSearchPress === "function") {
+      onSearchPress();
+    }
+  }, [onSearchPress]);
+
   return (
-    <SafeAreaView
-      className="bg-background"
-      style={{
-        paddingHorizontal: containerPadding,
-        paddingTop: headerTopPadding,
-        paddingBottom: headerBottomPadding,
-      }}
-    >
-      <View className="flex-row-reverse items-center justify-between">
-        <View className="flex-1">
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.headerRow}>
+        <IconButton name="menu" onPress={handleOpenDrawer} accessibilityLabel="פתיחת תפריט" />
+        <View style={styles.titleBlock}>
           <Text
-            className="text-text font-bold text-right"
-            style={{ fontSize: titleFontSize, lineHeight: titleFontSize * 1.2 }}
+            style={styles.title}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
           >
             {title}
           </Text>
-          {subtitle ? (
-            <Text
-              className="text-text/70 text-right mt-1"
-              style={{ fontSize: subtitleFontSize }}
-            >
-              {subtitle}
-            </Text>
-          ) : null}
+          {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
         </View>
-        <TouchableOpacity
-          className="bg-surface border border-border rounded-full"
-          style={{ padding: isTablet ? 14 : 12 }}
-          onPress={handleOpenDrawer}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          accessibilityLabel="פתיחת תפריט"
-        >
-          <Ionicons name="menu" size={20} color={COLORS.text} />
-        </TouchableOpacity>
+        <IconButton name="magnify" onPress={handleSearch} accessibilityLabel="חיפוש" />
       </View>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  safeArea: {
+    backgroundColor: colors.bg,
+    paddingHorizontal: spacing(2),
+    paddingTop: spacing(2),
+    paddingBottom: spacing(1.5),
+  },
+  headerRow: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: spacing(2),
+  },
+  titleBlock: {
+    flex: 1,
+    alignItems: "flex-end",
+  },
+  title: {
+    color: colors.text,
+    fontSize: 24,
+    lineHeight: 30,
+    fontWeight: "800",
+    textAlign: "right",
+  },
+  subtitle: {
+    marginTop: 4,
+    color: colors.textMuted,
+    fontSize: fonts.body,
+    textAlign: "right",
+  },
+  iconButton: {
+    width: spacing(5),
+    height: spacing(5),
+    borderRadius: radius.md,
+    backgroundColor: colors.card,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconButtonPressed: {
+    opacity: 0.8,
+  },
+});
