@@ -1,5 +1,4 @@
-import { SafeAreaView, ScrollView, View, Text, TouchableOpacity } from "react-native";
-import { StatusBar } from "expo-status-bar";
+import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, StatusBar } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import Header from "../components/Header";
 import { posts, comments as commentsMap } from "../../data/posts";
@@ -24,7 +23,7 @@ export default function PostScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <StatusBar style="light" />
+      <StatusBar barStyle="light-content" backgroundColor="#0C0F14" />
       <Header title={post?.title ?? "פוסט"} subtitle={`מאת ${post?.author ?? "משתמש"}`} />
       <ScrollView
         className="flex-1"

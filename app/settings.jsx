@@ -1,6 +1,13 @@
 import { useState } from "react";
-import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, Switch } from "react-native";
-import { StatusBar } from "expo-status-bar";
+import {
+  SafeAreaView,
+  ScrollView,
+  View,
+  Text,
+  TouchableOpacity,
+  Switch,
+  StatusBar,
+} from "react-native";
 import Slider from "@react-native-community/slider";
 import Header from "./components/Header";
 import { useResponsiveValues } from "./hooks/useResponsiveValues";
@@ -32,7 +39,7 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <StatusBar style="light" />
+      <StatusBar barStyle="light-content" backgroundColor="#0C0F14" />
       <Header title="הגדרות" subtitle="התאמה אישית של החוויה" />
       <ScrollView
         className="flex-1"

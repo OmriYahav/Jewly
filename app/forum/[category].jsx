@@ -1,6 +1,5 @@
-import { SafeAreaView, View, FlatList, Text } from "react-native";
+import { SafeAreaView, View, FlatList, Text, StatusBar } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import Header from "../components/Header";
 import PostCard from "../components/PostCard";
 import { posts, forumCategories } from "../../data/posts";
@@ -14,7 +13,7 @@ export default function ForumCategoryScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <StatusBar style="light" />
+      <StatusBar barStyle="light-content" backgroundColor="#0C0F14" />
       <Header title={forum?.label ?? "פורום"} subtitle="הדיונים החמים ביותר" />
       <View
         className="flex-1"
