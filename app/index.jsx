@@ -1,5 +1,4 @@
-import { SafeAreaView, View, FlatList } from "react-native";
-import { StatusBar } from "expo-status-bar";
+import { SafeAreaView, View, FlatList, StatusBar } from "react-native";
 import Header from "./components/Header";
 import PostCard from "./components/PostCard";
 import { posts } from "../data/posts";
@@ -10,7 +9,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <StatusBar style="light" />
+      <StatusBar barStyle="light-content" backgroundColor="#0C0F14" />
       <Header title="רוטר.נט" subtitle="פורום חדשות ודיונים" />
       <View
         className="flex-1"

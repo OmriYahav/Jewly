@@ -1,6 +1,14 @@
 import { useState } from "react";
-import { SafeAreaView, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
-import { StatusBar } from "expo-status-bar";
+import {
+  SafeAreaView,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  StatusBar,
+} from "react-native";
 import Header from "./components/Header";
 import { useResponsiveValues } from "./hooks/useResponsiveValues";
 
@@ -20,7 +28,7 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <StatusBar style="light" />
+      <StatusBar barStyle="light-content" backgroundColor="#0C0F14" />
       <Header title="התחברות" subtitle="הזן פרטי משתמש" />
       <KeyboardAvoidingView
         className="flex-1"
