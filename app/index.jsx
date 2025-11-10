@@ -1,0 +1,29 @@
+import { SafeAreaView, View, FlatList } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import Header from "./components/Header";
+import PostCard from "./components/PostCard";
+import { posts } from "../data/posts";
+import { useResponsiveValues } from "./hooks/useResponsiveValues";
+
+export default function HomeScreen() {
+  const { containerPadding, cardSpacing } = useResponsiveValues();
+
+  return (
+    <SafeAreaView className="flex-1 bg-background">
+      <StatusBar style="light" />
+      <Header title="רוטר.נט" subtitle="פורום חדשות ודיונים" />
+      <View
+        className="flex-1"
+        style={{ paddingHorizontal: containerPadding, paddingBottom: cardSpacing }}
+      >
+        <FlatList
+          data={posts}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => <PostCard post={item} />}
+          contentContainerStyle={{ paddingBottom: cardSpacing * 5 }}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
+    </SafeAreaView>
+  );
+}

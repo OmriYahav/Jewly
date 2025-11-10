@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "JewlyForum",
+    "slug": "jewlyforum",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "jewlyforum",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0C0F14"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {},
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}

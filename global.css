@@ -1,0 +1,5 @@
+@import "nativewind/tailwind.css";
+
+:root {
+  color-scheme: dark;
+}
