@@ -70,7 +70,7 @@ function HomeScreen() {
 
   return (
     <>
-      <AppHeader title="Jewly" subtitle="פורום חדשות ודיונים" scrollY={scrollY} />
+      <AppHeader title="Jewly" scrollY={scrollY} />
       <Animated.FlatList
         data={posts}
         keyExtractor={keyExtractor}
