@@ -1,6 +1,6 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
-  ScrollView,
+  Animated,
   View,
   Text,
   TextInput,
@@ -9,7 +9,7 @@ import {
   Platform,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import Header from "../components/Header";
+import AppHeader from "../../components/AppHeader";
 import { withScreenWrapper } from "../components/layout/ScreenWrapper";
 import { useForum } from "../../src/context/ForumContext";
 import { useResponsiveValues } from "../../src/hooks/useResponsiveValues";
@@ -30,7 +30,8 @@ function CreatePostScreen() {
     buttonFontSize,
     cardSpacing,
   } = useResponsiveValues();
-  const { colors, spacing, radius } = useAppearance();
+  const { colors, spacing, radius, fontFamily } = useAppearance();
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
@@ -66,16 +67,21 @@ function CreatePostScreen() {
 
   return (
     <>
-      <Header title="פוסט חדש" subtitle="הוסיפו דיון לקהילה" />
+      <AppHeader title="פוסט חדש" subtitle="הוסיפו דיון לקהילה" scrollY={scrollY} />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 24}
       >
-        <ScrollView
+        <Animated.ScrollView
           style={{ flex: 1, paddingHorizontal: containerPadding }}
           contentContainerStyle={{ paddingBottom: cardSpacing * 3 }}
           showsVerticalScrollIndicator={false}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: true }
+          )}
+          scrollEventThrottle={16}
         >
           <View
             style={{
@@ -95,6 +101,7 @@ function CreatePostScreen() {
                   fontWeight: "700",
                   textAlign: "right",
                   marginBottom: spacing(1),
+                  fontFamily,
                 }}
               >
                 כותרת הפוסט
@@ -110,6 +117,7 @@ function CreatePostScreen() {
                   borderWidth: 1,
                   borderColor: colors.divider,
                   textAlign: "right",
+                  fontFamily,
                 }}
                 placeholder="על מה תרצו לדבר?"
                 placeholderTextColor="rgba(71,85,105,0.35)"
@@ -126,6 +134,7 @@ function CreatePostScreen() {
                   fontWeight: "700",
                   textAlign: "right",
                   marginBottom: spacing(1),
+                  fontFamily,
                 }}
               >
                 בחרו פורום
@@ -153,6 +162,7 @@ function CreatePostScreen() {
                           fontSize: bodyFontSize,
                           textAlign: "right",
                           fontWeight: isSelected ? "700" : "500",
+                          fontFamily,
                         }}
                       >
                         {option.label}
@@ -171,6 +181,7 @@ function CreatePostScreen() {
                   fontWeight: "700",
                   textAlign: "right",
                   marginBottom: spacing(1),
+                  fontFamily,
                 }}
               >
                 שם כותב / ניק
@@ -182,11 +193,12 @@ function CreatePostScreen() {
                   borderRadius: radius.md,
                   paddingHorizontal: spacing(2),
                   paddingVertical: spacing(1.5),
-                  fontSize: bodyFontSize,
-                  borderWidth: 1,
-                  borderColor: colors.divider,
-                  textAlign: "right",
-                }}
+                fontSize: bodyFontSize,
+                borderWidth: 1,
+                borderColor: colors.divider,
+                textAlign: "right",
+                fontFamily,
+              }}
                 placeholder="למי לתת קרדיט?"
                 placeholderTextColor="rgba(71,85,105,0.35)"
                 value={author}
@@ -202,6 +214,7 @@ function CreatePostScreen() {
                   fontWeight: "700",
                   textAlign: "right",
                   marginBottom: spacing(1),
+                  fontFamily,
                 }}
               >
                 תגית (לא חובה)
@@ -217,6 +230,7 @@ function CreatePostScreen() {
                   borderWidth: 1,
                   borderColor: colors.divider,
                   textAlign: "right",
+                  fontFamily,
                 }}
                 placeholder="לדוגמה: דיווח מיוחד"
                 placeholderTextColor="rgba(71,85,105,0.35)"
@@ -233,6 +247,7 @@ function CreatePostScreen() {
                   fontWeight: "700",
                   textAlign: "right",
                   marginBottom: spacing(1),
+                  fontFamily,
                 }}
               >
                 תוכן הפוסט
@@ -249,6 +264,7 @@ function CreatePostScreen() {
                   borderColor: colors.divider,
                   textAlign: "right",
                   minHeight: spacing(20),
+                  fontFamily,
                 }}
                 placeholder="ספרו לנו את כל הפרטים החשובים..."
                 placeholderTextColor="rgba(71,85,105,0.35)"
@@ -262,6 +278,7 @@ function CreatePostScreen() {
                   fontSize: metaFontSize,
                   textAlign: "right",
                   marginTop: spacing(0.5),
+                  fontFamily,
                 }}
               >
                 יש לכתוב לפחות 20 תווים כדי לפרסם.
@@ -287,13 +304,14 @@ function CreatePostScreen() {
                   textAlign: "center",
                   fontSize: buttonFontSize,
                   fontWeight: "700",
+                  fontFamily,
                 }}
               >
                 פרסום הפוסט
               </Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
+        </Animated.ScrollView>
       </KeyboardAvoidingView>
     </>
   );

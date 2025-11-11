@@ -15,6 +15,7 @@
     "@react-native-community/slider": "5.0.1",
     "@react-navigation/drawer": "^7.5.0",
     "expo": "^54.0.23",
+    "expo-linear-gradient": "~13.0.2",
     "expo-router": "~6.0.14",
     "expo-updates": "~29.0.12",
     "nativewind": "^4.0.36",

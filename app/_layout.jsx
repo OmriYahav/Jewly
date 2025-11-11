@@ -2,7 +2,7 @@ import "react-native-gesture-handler";
 import "../global.css";
 
 import { useEffect, useMemo } from "react";
-import { I18nManager, Platform, useWindowDimensions } from "react-native";
+import { I18nManager, Platform, Text, useWindowDimensions } from "react-native";
 import { Drawer } from "expo-router/drawer";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -12,6 +12,19 @@ import { ForumProvider } from "../src/context/ForumContext";
 import { AppearanceProvider, useAppearance } from "../src/context/AppearanceContext";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Provider as PaperProvider } from "react-native-paper";
+
+const existingTextStyle = Text.defaultProps?.style;
+if (Text.defaultProps == null) {
+  Text.defaultProps = {};
+}
+Text.defaultProps.style = [
+  ...(Array.isArray(existingTextStyle)
+    ? existingTextStyle.filter(Boolean)
+    : existingTextStyle
+    ? [existingTextStyle]
+    : []),
+  { fontFamily: "Assistant" },
+];
 
 function AppDrawer() {
   const { colors, radius } = useAppearance();

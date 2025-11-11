@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAppearance } from "../src/context/AppearanceContext";
 
 export default function SearchModal({ visible, onClose, posts = [], onSelectResult }) {
-  const { colors, spacing, fonts, radius } = useAppearance();
+  const { colors, spacing, fonts, radius, fontFamily } = useAppearance();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
 
@@ -76,6 +76,7 @@ export default function SearchModal({ visible, onClose, posts = [], onSelectResu
             fontSize: fonts.title,
             fontWeight: "700",
             textAlign: "right",
+            fontFamily,
           }}
         >
           {item.title}
@@ -87,6 +88,7 @@ export default function SearchModal({ visible, onClose, posts = [], onSelectResu
             color: colors.textMuted,
             fontSize: fonts.body,
             textAlign: "right",
+            fontFamily,
           }}
         >
           {item.content}
@@ -132,16 +134,17 @@ export default function SearchModal({ visible, onClose, posts = [], onSelectResu
               marginBottom: spacing(1.5),
             }}
           >
-            <Text
-              style={{
-                color: colors.text,
-                fontSize: fonts.title + 2,
-                fontWeight: "800",
-                textAlign: "right",
-              }}
-            >
-              חיפוש
-            </Text>
+          <Text
+            style={{
+              color: colors.text,
+              fontSize: fonts.title + 2,
+              fontWeight: "800",
+              textAlign: "right",
+              fontFamily,
+            }}
+          >
+            חיפוש
+          </Text>
             <Pressable
               onPress={handleClose}
               style={({ pressed }) => [
@@ -169,34 +172,37 @@ export default function SearchModal({ visible, onClose, posts = [], onSelectResu
             onChangeText={handleSearch}
             placeholder="חיפוש בכל הפורומים..."
             placeholderTextColor={colors.textMuted}
-            style={{
-              backgroundColor: colors.surface,
-              borderRadius: radius.md,
-              borderWidth: 1,
-              borderColor: colors.divider,
-              paddingVertical: spacing(1.25),
-              paddingHorizontal: spacing(2),
-              fontSize: fonts.body,
-              color: colors.text,
-              textAlign: "right",
-            }}
-            autoFocus
-          />
+          style={{
+            backgroundColor: colors.surface,
+            borderRadius: radius.md,
+            borderWidth: 1,
+            borderColor: colors.divider,
+            paddingVertical: spacing(1.25),
+            paddingHorizontal: spacing(2),
+            fontSize: fonts.body,
+            color: colors.text,
+            textAlign: "right",
+            fontFamily,
+          }}
+          autoFocus
+        />
 
-          <View style={{ marginTop: spacing(2), flex: 1 }}>
-            {query.trim().length > 0 && results.length === 0 ? (
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  paddingVertical: spacing(4),
-                }}
+        <View style={{ marginTop: spacing(2), flex: 1 }}>
+          {query.trim().length > 0 && results.length === 0 ? (
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+                paddingVertical: spacing(4),
+              }}
+            >
+              <Text
+                style={{ color: colors.textMuted, fontSize: fonts.body, fontFamily, textAlign: "center" }}
               >
-                <Text style={{ color: colors.textMuted, fontSize: fonts.body }}>
-                  לא נמצאו תוצאות.
-                </Text>
-              </View>
+                לא נמצאו תוצאות.
+              </Text>
+            </View>
             ) : (
               <FlatList
                 data={results}

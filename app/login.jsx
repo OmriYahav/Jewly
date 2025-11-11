@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
 import { useRouter } from "expo-router";
-import Header from "./components/Header";
+import AppHeader from "../components/AppHeader";
 import { withScreenWrapper } from "./components/layout/ScreenWrapper";
 import { useResponsiveValues } from "../src/hooks/useResponsiveValues";
 import { useAppearance } from "../src/context/AppearanceContext";
@@ -10,7 +10,7 @@ function LoginScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
-  const { colors, spacing, radius } = useAppearance();
+  const { colors, spacing, radius, fontFamily } = useAppearance();
   const {
     containerPadding,
     cardPadding,
@@ -28,7 +28,7 @@ function LoginScreen() {
 
   return (
     <>
-      <Header title="התחברות" subtitle="הזן פרטי משתמש" />
+      <AppHeader title="התחברות" subtitle="הזן פרטי משתמש" />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -53,6 +53,7 @@ function LoginScreen() {
                 fontSize: bodyFontSize,
                 textAlign: "right",
                 fontWeight: "600",
+                fontFamily,
               }}
             >
               שם משתמש
@@ -68,6 +69,7 @@ function LoginScreen() {
                 borderWidth: 1,
                 borderColor: colors.divider,
                 textAlign: "right",
+                fontFamily,
               }}
               placeholder="הקלד שם משתמש"
               placeholderTextColor="rgba(71, 85, 105, 0.35)"
@@ -80,6 +82,7 @@ function LoginScreen() {
                 fontSize: bodyFontSize,
                 textAlign: "right",
                 fontWeight: "600",
+                fontFamily,
               }}
             >
               סיסמה
@@ -95,6 +98,7 @@ function LoginScreen() {
                 borderWidth: 1,
                 borderColor: colors.divider,
                 textAlign: "right",
+                fontFamily,
               }}
               placeholder="הקלד סיסמה"
               placeholderTextColor="rgba(71, 85, 105, 0.35)"
@@ -113,27 +117,29 @@ function LoginScreen() {
               onPress={handleSubmit}
               accessibilityRole="button"
             >
-              <Text
-                style={{
-                  color: colors.surface,
-                  textAlign: "center",
-                  fontSize: buttonFontSize,
-                  fontWeight: "700",
-                }}
-              >
-                התחברות
-              </Text>
-            </TouchableOpacity>
             <Text
               style={{
-                color: colors.textMuted,
-                fontSize: metaFontSize,
-                marginTop: cardSpacing,
-                textAlign: "right",
+                color: colors.surface,
+                textAlign: "center",
+                fontSize: buttonFontSize,
+                fontWeight: "700",
+                fontFamily,
               }}
             >
-              פרטי ההתחברות לשימוש הדגמה בלבד.
+              התחברות
             </Text>
+          </TouchableOpacity>
+          <Text
+            style={{
+              color: colors.textMuted,
+              fontSize: metaFontSize,
+              marginTop: cardSpacing,
+              textAlign: "right",
+              fontFamily,
+            }}
+          >
+            פרטי ההתחברות לשימוש הדגמה בלבד.
+          </Text>
           </View>
         </View>
       </KeyboardAvoidingView>

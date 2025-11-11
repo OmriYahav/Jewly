@@ -1,8 +1,9 @@
-import { useCallback, useMemo } from "react";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { useCallback, useMemo, useRef } from "react";
+import { Animated, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import Header from "../app/components/Header";
-import ThreadCard from "../app/components/ThreadCard";
+import AppHeader from "../components/AppHeader";
+import PostCard from "../components/PostCard";
+import FloatingActionButton from "../components/FloatingActionButton";
 import { withScreenWrapper } from "../app/components/layout/ScreenWrapper";
 import { useForum } from "../src/context/ForumContext";
 import { useAppearance } from "../src/context/AppearanceContext";
@@ -10,7 +11,8 @@ import { useAppearance } from "../src/context/AppearanceContext";
 function ScoopForumScreen() {
   const router = useRouter();
   const { posts } = useForum();
-  const { colors, spacing, radius, fonts } = useAppearance();
+  const { colors, spacing, fonts, fontFamily } = useAppearance();
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   const scoopPosts = useMemo(
     () => posts.filter((item) => item.category === "scoops"),
@@ -35,13 +37,14 @@ function ScoopForumScreen() {
   );
 
   const renderThread = useCallback(
-    ({ item }) => (
-      <ThreadCard
+    ({ item, index }) => (
+      <PostCard
         title={item.title}
         author={item.author}
         tagLabel={item.tag}
         views={item.views}
         comments={item.comments}
+        index={index}
         onPress={handleNavigateToThread(item.id)}
       />
     ),
@@ -52,7 +55,7 @@ function ScoopForumScreen() {
 
   return (
     <>
-      <Header title="סקופים" subtitle="כל הדיווחים החמים בזמן אמת" />
+      <AppHeader title="סקופים" subtitle="כל הדיווחים החמים בזמן אמת" scrollY={scrollY} />
       {scoopPosts.length === 0 ? (
         <View
           style={{
@@ -62,12 +65,19 @@ function ScoopForumScreen() {
             paddingHorizontal: spacing(3),
           }}
         >
-          <Text style={{ color: colors.textMuted, fontSize: fonts.body, textAlign: "center" }}>
+          <Text
+            style={{
+              color: colors.textMuted,
+              fontSize: fonts.body,
+              textAlign: "center",
+              fontFamily,
+            }}
+          >
             אין עדיין סקופים.
           </Text>
         </View>
       ) : (
-        <FlatList
+        <Animated.FlatList
           data={scoopPosts}
           keyExtractor={keyExtractor}
           renderItem={renderThread}
@@ -77,38 +87,18 @@ function ScoopForumScreen() {
           windowSize={4}
           removeClippedSubviews
           showsVerticalScrollIndicator={false}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: true }
+          )}
+          scrollEventThrottle={16}
         />
       )}
-      <TouchableOpacity
+      <FloatingActionButton
+        label="סקופ חדש"
+        iconName="flash-outline"
         onPress={() => router.push({ pathname: "/post/create", params: { category: "scoops" } })}
-        style={{
-          position: "absolute",
-          bottom: spacing(3),
-          right: spacing(3),
-          backgroundColor: colors.brand,
-          borderRadius: radius.lg,
-          paddingVertical: spacing(1.75),
-          paddingHorizontal: spacing(3),
-          shadowColor: "rgba(30, 119, 195, 0.35)",
-          shadowOffset: { width: 0, height: 10 },
-          shadowOpacity: 0.4,
-          shadowRadius: 20,
-          elevation: 8,
-        }}
-        accessibilityRole="button"
-        accessibilityLabel="יצירת סקופ חדש"
-        activeOpacity={0.9}
-      >
-        <Text
-          style={{
-            color: colors.surface,
-            fontWeight: "700",
-            fontSize: fonts.body,
-          }}
-        >
-          סקופ חדש
-        </Text>
-      </TouchableOpacity>
+      />
     </>
   );
 }

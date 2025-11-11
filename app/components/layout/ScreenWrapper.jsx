@@ -1,18 +1,15 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, useEffect, useRef } from "react";
 import {
+  Animated,
   BackHandler,
   Keyboard,
   Platform,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-  I18nManager,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import ScreenContainer from "./ScreenContainer";
-import { useAppearance } from "../../../src/context/AppearanceContext";
 
 function ScreenWrapper({
   children,
@@ -20,12 +17,17 @@ function ScreenWrapper({
   contentStyle,
   statusBarStyle,
   dismissKeyboard = true,
-  showBackButton = true,
 }) {
   const navigation = useNavigation();
-  const { colors, spacing, radius } = useAppearance();
-  const canGoBack = navigation?.canGoBack?.() ?? false;
-  const shouldShowBackButton = showBackButton && canGoBack;
+  const fadeAnimation = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(fadeAnimation, {
+      toValue: 1,
+      duration: 320,
+      useNativeDriver: true,
+    }).start();
+  }, [fadeAnimation]);
 
   useFocusEffect(
     useCallback(() => {
@@ -47,12 +49,6 @@ function ScreenWrapper({
     }, [navigation])
   );
 
-  const handleGoBack = useCallback(() => {
-    if (navigation?.canGoBack?.()) {
-      navigation.goBack();
-    }
-  }, [navigation]);
-
   const handleDismissKeyboard = useCallback(() => {
     if (dismissKeyboard) {
       Keyboard.dismiss();
@@ -60,45 +56,9 @@ function ScreenWrapper({
   }, [dismissKeyboard]);
 
   const content = (
-    <View style={[{ flex: 1 }, contentStyle]}>
-      {shouldShowBackButton ? (
-        <View
-          style={{
-            paddingHorizontal: spacing(1.5),
-            paddingTop: spacing(1),
-            paddingBottom: spacing(0.5),
-            flexDirection: "row",
-            justifyContent: I18nManager.isRTL ? "flex-end" : "flex-start",
-          }}
-          pointerEvents="box-none"
-        >
-          <TouchableOpacity
-            onPress={handleGoBack}
-            accessibilityRole="button"
-            accessibilityLabel="חזרה"
-            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-            style={{
-              backgroundColor: colors.surface,
-              borderRadius: radius.lg,
-              paddingVertical: spacing(0.75),
-              paddingHorizontal: spacing(0.75),
-              shadowColor: "rgba(15, 23, 42, 0.15)",
-              shadowOffset: { width: 0, height: 6 },
-              shadowOpacity: 0.25,
-              shadowRadius: 12,
-              elevation: 3,
-            }}
-          >
-            <Ionicons
-              name={I18nManager.isRTL ? "chevron-forward" : "chevron-back"}
-              size={22}
-              color={colors.text}
-            />
-          </TouchableOpacity>
-        </View>
-      ) : null}
+    <Animated.View style={[{ flex: 1, opacity: fadeAnimation }, contentStyle]}>
       <View style={{ flex: 1 }}>{children}</View>
-    </View>
+    </Animated.View>
   );
 
   if (!dismissKeyboard) {

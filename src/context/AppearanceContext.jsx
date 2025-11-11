@@ -15,6 +15,8 @@ const DEFAULTS = {
   textScale: 1.07,
 };
 
+const FONT_FAMILY = "Assistant";
+
 const AppearanceContext = createContext(null);
 
 function scaleFonts(multiplier) {
@@ -135,6 +137,7 @@ export function AppearanceProvider({ children }) {
       setThemeMode: handleThemeChange,
       colors: palette,
       fonts,
+      fontFamily: FONT_FAMILY,
       spacing,
       radius,
       shadow,
@@ -144,7 +147,17 @@ export function AppearanceProvider({ children }) {
       setTextScale: handleTextScaleChange,
       isDarkMode: palette === darkColors,
     }),
-    [fonts, handleRowHighlightChange, handleTextScaleChange, handleThemeChange, isLoaded, palette, rowHighlight, textScale, themeMode]
+    [
+      fonts,
+      handleRowHighlightChange,
+      handleTextScaleChange,
+      handleThemeChange,
+      isLoaded,
+      palette,
+      rowHighlight,
+      textScale,
+      themeMode,
+    ]
   );
 
   return <AppearanceContext.Provider value={contextValue}>{children}</AppearanceContext.Provider>;

@@ -1,8 +1,9 @@
-import { useCallback, useMemo } from "react";
-import { View, FlatList, Text, TouchableOpacity } from "react-native";
+import { useCallback, useMemo, useRef } from "react";
+import { Animated, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import Header from "../components/Header";
-import ThreadCard from "../components/ThreadCard";
+import AppHeader from "../../components/AppHeader";
+import PostCard from "../../components/PostCard";
+import FloatingActionButton from "../../components/FloatingActionButton";
 import { withScreenWrapper } from "../components/layout/ScreenWrapper";
 import { useForum } from "../../src/context/ForumContext";
 import { useAppearance } from "../../src/context/AppearanceContext";
@@ -11,7 +12,8 @@ function ForumCategoryScreen() {
   const { category } = useLocalSearchParams();
   const router = useRouter();
   const { posts, categories } = useForum();
-  const { spacing, colors, fonts, radius } = useAppearance();
+  const { spacing, colors, fonts, fontFamily } = useAppearance();
+  const scrollY = useRef(new Animated.Value(0)).current;
   const normalizedCategory = Array.isArray(category) ? category[0] : category;
   const forum = useMemo(
     () => categories.find((item) => item.key === normalizedCategory),
@@ -34,13 +36,14 @@ function ForumCategoryScreen() {
   );
 
   const renderThread = useCallback(
-    ({ item }) => (
-      <ThreadCard
+    ({ item, index }) => (
+      <PostCard
         title={item.title}
         author={item.author}
         tagLabel={item.tag}
         views={item.views}
         comments={item.comments}
+        index={index}
         onPress={() => router.push({ pathname: "/post/[id]", params: { id: item.id } })}
       />
     ),
@@ -51,7 +54,7 @@ function ForumCategoryScreen() {
 
   return (
     <>
-      <Header title={forum?.label ?? "פורום"} subtitle="הדיונים החמים ביותר" />
+      <AppHeader title={forum?.label ?? "פורום"} subtitle="הדיונים החמים ביותר" scrollY={scrollY} />
       <View style={{ flex: 1 }}>
         {filteredPosts.length === 0 ? (
           <View
@@ -62,12 +65,19 @@ function ForumCategoryScreen() {
               paddingHorizontal: spacing(3),
             }}
           >
-            <Text style={{ color: colors.textMuted, fontSize: fonts.body, textAlign: "center" }}>
+            <Text
+              style={{
+                color: colors.textMuted,
+                fontSize: fonts.body,
+                textAlign: "center",
+                fontFamily,
+              }}
+            >
               אין פוסטים להצגה כרגע. היו הראשונים לפתוח דיון!
             </Text>
           </View>
         ) : (
-          <FlatList
+          <Animated.FlatList
             data={filteredPosts}
             keyExtractor={keyExtractor}
             renderItem={renderThread}
@@ -77,10 +87,16 @@ function ForumCategoryScreen() {
             windowSize={4}
             removeClippedSubviews
             showsVerticalScrollIndicator={false}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+              { useNativeDriver: true }
+            )}
+            scrollEventThrottle={16}
           />
         )}
       </View>
-      <TouchableOpacity
+      <FloatingActionButton
+        label="פוסט חדש"
         onPress={() => {
           if (forum) {
             router.push({ pathname: "/post/create", params: { category: forum.key } });
@@ -88,34 +104,7 @@ function ForumCategoryScreen() {
             router.push("/post/create");
           }
         }}
-        style={{
-          position: "absolute",
-          bottom: spacing(3),
-          right: spacing(3),
-          backgroundColor: colors.brand,
-          borderRadius: radius.lg,
-          paddingVertical: spacing(1.75),
-          paddingHorizontal: spacing(3),
-          shadowColor: "rgba(30, 119, 195, 0.35)",
-          shadowOffset: { width: 0, height: 10 },
-          shadowOpacity: 0.4,
-          shadowRadius: 20,
-          elevation: 8,
-        }}
-        accessibilityRole="button"
-        accessibilityLabel="פתיחת פוסט חדש"
-        activeOpacity={0.9}
-      >
-        <Text
-          style={{
-            color: colors.surface,
-            fontWeight: "700",
-            fontSize: fonts.body,
-          }}
-        >
-          פוסט חדש
-        </Text>
-      </TouchableOpacity>
+      />
     </>
   );
 }

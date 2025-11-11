@@ -1,6 +1,6 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
-  ScrollView,
+  Animated,
   View,
   Text,
   TouchableOpacity,
@@ -9,7 +9,7 @@ import {
   Platform,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import Header from "../components/Header";
+import AppHeader from "../../components/AppHeader";
 import { withScreenWrapper } from "../components/layout/ScreenWrapper";
 import { useForum } from "../../src/context/ForumContext";
 import { useResponsiveValues } from "../../src/hooks/useResponsiveValues";
@@ -33,7 +33,8 @@ function PostScreen() {
     cardSpacing,
     smallFontSize,
   } = useResponsiveValues();
-  const { colors, spacing, radius, rowHighlight } = useAppearance();
+  const { colors, spacing, radius, rowHighlight, fontFamily } = useAppearance();
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   const [commentAuthor, setCommentAuthor] = useState("");
   const [commentText, setCommentText] = useState("");
@@ -76,16 +77,21 @@ function PostScreen() {
 
   return (
     <>
-      <Header title={post?.title ?? "פוסט"} subtitle={`מאת ${post?.author ?? "משתמש"}`} />
+      <AppHeader title={post?.title ?? "פוסט"} subtitle={`מאת ${post?.author ?? "משתמש"}`} scrollY={scrollY} />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 32}
       >
-        <ScrollView
+        <Animated.ScrollView
           style={{ flex: 1, paddingHorizontal: containerPadding }}
           contentContainerStyle={{ paddingBottom: cardSpacing * 4 }}
           showsVerticalScrollIndicator={false}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: true }
+          )}
+          scrollEventThrottle={16}
         >
           <View
             style={{
@@ -103,6 +109,7 @@ function PostScreen() {
                 fontSize: bodyFontSize,
                 lineHeight: bodyFontSize * 1.6,
                 textAlign: "right",
+                fontFamily,
               }}
             >
               {post?.content ?? "הפוסט לא נמצא."}
@@ -115,6 +122,7 @@ function PostScreen() {
               fontWeight: "700",
               marginBottom: cardSpacing,
               textAlign: "right",
+              fontFamily,
             }}
           >
             תגובות
@@ -134,6 +142,7 @@ function PostScreen() {
                   color: colors.textMuted,
                   fontSize: metaFontSize,
                   textAlign: "right",
+                  fontFamily,
                 }}
               >
                 היו הראשונים להגיב לדיון הזה.
@@ -163,16 +172,17 @@ function PostScreen() {
                     marginBottom: spacing(0.5),
                   }}
                 >
-                  <Text
-                    style={{
-                      color: colors.text,
-                      fontSize: metaFontSize,
-                      fontWeight: "600",
-                    }}
-                  >
-                    {comment.author}
-                  </Text>
-                  <Text style={{ color: colors.textMuted, fontSize: smallFontSize }}>
+                <Text
+                  style={{
+                    color: colors.text,
+                    fontSize: metaFontSize,
+                    fontWeight: "600",
+                    fontFamily,
+                  }}
+                >
+                  {comment.author}
+                </Text>
+                  <Text style={{ color: colors.textMuted, fontSize: smallFontSize, fontFamily }}>
                     {comment.time}
                   </Text>
                 </View>
@@ -183,6 +193,7 @@ function PostScreen() {
                     fontSize: bodyFontSize - 1,
                     lineHeight: (bodyFontSize - 1) * 1.5,
                     textAlign: "right",
+                    fontFamily,
                   }}
                 >
                   {comment.text}
@@ -190,7 +201,7 @@ function PostScreen() {
               </View>
             ))
           )}
-        </ScrollView>
+        </Animated.ScrollView>
         <View
           style={{
             paddingHorizontal: containerPadding,
@@ -214,6 +225,7 @@ function PostScreen() {
                 marginBottom: spacing(1),
                 textAlign: "right",
                 fontWeight: "600",
+                fontFamily,
               }}
             >
               השאירו תגובה
@@ -230,6 +242,7 @@ function PostScreen() {
                 borderColor: colors.divider,
                 textAlign: "right",
                 marginBottom: spacing(1),
+                fontFamily,
               }}
               placeholder="שם (לא חובה)"
               placeholderTextColor="rgba(71,85,105,0.35)"
@@ -249,6 +262,7 @@ function PostScreen() {
                 textAlign: "right",
                 minHeight: spacing(12),
                 marginBottom: spacing(1.5),
+                fontFamily,
               }}
               placeholder="מה יש לכם לומר?"
               placeholderTextColor="rgba(71,85,105,0.35)"
@@ -275,6 +289,7 @@ function PostScreen() {
                   textAlign: "center",
                   fontSize: buttonFontSize,
                   fontWeight: "700",
+                  fontFamily,
                 }}
               >
                 שליחת תגובה
