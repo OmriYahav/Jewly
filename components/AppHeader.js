@@ -1,9 +1,9 @@
 import { memo, useCallback, useMemo, useState } from "react";
 import {
   Animated,
+  Dimensions,
   I18nManager,
   Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -16,12 +16,11 @@ import { useAppearance } from "../src/context/AppearanceContext";
 import { useForum } from "../src/context/ForumContext";
 import SearchModal from "./SearchModal";
 
-const BASE_HEADER_HEIGHT = 48;
-const NAV_BAR_HEIGHT = 36;
+const WINDOW_HEIGHT = Dimensions.get("window").height || 0;
+const BASE_HEADER_HEIGHT = Math.min(70, Math.max(60, WINDOW_HEIGHT * 0.1));
 const SHRINK_DISTANCE = 120;
-const NAV_CATEGORIES = ["ראשי", "סקופים", "פאנל", "דיונים חמים", "פורומים"];
 
-export const APP_HEADER_HEIGHT = BASE_HEADER_HEIGHT + NAV_BAR_HEIGHT;
+export const APP_HEADER_HEIGHT = BASE_HEADER_HEIGHT;
 
 const AnimatedSafeAreaView = Animated.createAnimatedComponent(SafeAreaView);
 
@@ -29,7 +28,7 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
   const navigation = useNavigation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { colors, fonts, spacing, fontFamily, isDarkMode } = useAppearance();
+  const { fonts, spacing, fontFamily, isDarkMode } = useAppearance();
   const { posts } = useForum();
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const effectiveScrollY = useMemo(() => scrollY ?? new Animated.Value(0), [scrollY]);
@@ -63,22 +62,25 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
     [shrinkProgress]
   );
 
-  const totalHeight = BASE_HEADER_HEIGHT + NAV_BAR_HEIGHT + insets.top;
-  const headerPosition = Platform.OS === "web" ? "sticky" : "relative";
+  const totalHeight = BASE_HEADER_HEIGHT + insets.top;
+  const headerPosition = Platform.OS === "web" ? "fixed" : "absolute";
 
   const titleColor = isDarkMode ? "rgba(255,255,255,0.9)" : "#1A1A1A";
   const taglineColor = isDarkMode ? "#aaa" : "#8c8c8c";
   const iconColor = isDarkMode ? "#fff" : "#1A1A1A";
-  const surfaceColor = isDarkMode ? "rgba(0,0,0,0.9)" : "#fff";
+  const surfaceColor = isDarkMode
+    ? "rgba(0, 0, 0, 0.5)"
+    : "rgba(255, 255, 255, 0.8)";
 
   const styles = useMemo(
     () =>
       StyleSheet.create({
         wrapper: {
           position: headerPosition,
-          top: headerPosition === "sticky" ? 0 : undefined,
+          top: 0,
           left: 0,
           right: 0,
+          width: "100%",
           zIndex: 50,
           shadowColor: "#000",
           shadowOpacity: isDarkMode ? 0.2 : 0.1,
@@ -91,6 +93,17 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
           paddingTop: insets.top,
           paddingHorizontal: spacing(2),
           backgroundColor: surfaceColor,
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: isDarkMode
+            ? "rgba(255,255,255,0.18)"
+            : "rgba(26,26,26,0.08)",
+          ...Platform.select({
+            web: {
+              backdropFilter: "blur(10px)",
+              WebkitBackdropFilter: "blur(10px)",
+            },
+            default: {},
+          }),
         },
         headerContainer: {
           height: BASE_HEADER_HEIGHT,
@@ -134,53 +147,21 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
           borderRadius: 20,
           alignItems: "center",
           justifyContent: "center",
+          backgroundColor: isDarkMode
+            ? "rgba(255,255,255,0.08)"
+            : "rgba(0,0,0,0.04)",
         },
         iconText: {
           color: iconColor,
-        },
-        navBar: {
-          minHeight: NAV_BAR_HEIGHT,
-          marginTop: spacing(0.5),
-          borderTopWidth: StyleSheet.hairlineWidth,
-          borderTopColor: isDarkMode ? "rgba(255,255,255,0.08)" : "#EAEAEA",
-          borderBottomWidth: StyleSheet.hairlineWidth,
-          borderBottomColor: isDarkMode ? "rgba(255,255,255,0.12)" : "#E5E5E5",
-          justifyContent: "center",
-          backgroundColor: surfaceColor,
-        },
-        navScroll: {
-          flexDirection: I18nManager.isRTL ? "row-reverse" : "row",
-          alignItems: "center",
-          paddingHorizontal: spacing(1),
-        },
-        navItem: {
-          paddingVertical: 6,
-          paddingHorizontal: spacing(1.2),
-          borderRadius: 999,
-          marginHorizontal: spacing(0.5),
-          flexShrink: 0,
-        },
-        navItemText: {
-          fontSize: fonts.meta + 1,
-          fontFamily,
-          color: isDarkMode ? "rgba(255,255,255,0.75)" : "#1F2933",
-        },
-        navItemActive: {
-          backgroundColor: isDarkMode ? "rgba(77,163,255,0.18)" : "rgba(30,119,195,0.1)",
-        },
-        navItemActiveText: {
-          color: colors.brand,
-          fontWeight: "600",
         },
         placeholder: {
           height: totalHeight,
         },
       }),
     [
-      colors.brand,
       fontFamily,
-      fonts.meta,
       fonts.title,
+      fonts.meta,
       headerPosition,
       insets.top,
       isDarkMode,
@@ -277,38 +258,9 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
             </TouchableOpacity>
           </Animated.View>
 
-          <View style={styles.navBar}>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.navScroll}
-            >
-              {NAV_CATEGORIES.map((category, index) => (
-                <TouchableOpacity
-                  key={category}
-                  activeOpacity={0.8}
-                  style={[styles.navItem, index === 0 && styles.navItemActive]}
-                  onPress={() => {
-                    if (index === 0) {
-                      router.replace("/");
-                    }
-                  }}
-                >
-                  <Text
-                    style={[
-                      styles.navItemText,
-                      index === 0 && styles.navItemActiveText,
-                    ]}
-                  >
-                    {category}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
         </AnimatedSafeAreaView>
       </Animated.View>
-      {headerPosition === "absolute" ? <View style={styles.placeholder} /> : null}
+      <View style={styles.placeholder} />
       <SearchModal
         visible={isSearchVisible}
         onClose={handleCloseSearch}
