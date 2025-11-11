@@ -1,9 +1,10 @@
 import { useMemo } from "react";
 import { useWindowDimensions, Platform } from "react-native";
-import { spacing, radius, fonts } from "../theme";
+import { useAppearance } from "../context/AppearanceContext";
 
 export function useResponsiveValues() {
   const { width } = useWindowDimensions();
+  const { spacing, radius, fonts } = useAppearance();
 
   return useMemo(() => {
     const isTablet = width >= 768;
@@ -11,15 +12,15 @@ export function useResponsiveValues() {
 
     const containerPadding = isTablet ? spacing(3) : isCompact ? spacing(1.5) : spacing(2);
     const cardPadding = isTablet ? spacing(3) : spacing(2);
-    const cardRadius = isTablet ? radius.lg + 6 : radius.lg;
+    const cardRadius = isTablet ? radius.lg + 4 : radius.lg;
     const cardSpacing = spacing(2);
-    const titleFontSize = isTablet ? 26 : 22;
+    const titleFontSize = isTablet ? fonts.title + 4 : fonts.title + 2;
     const subtitleFontSize = fonts.body;
-    const bodyFontSize = isTablet ? 18 : 16;
+    const bodyFontSize = isTablet ? fonts.body + 2 : fonts.body;
     const metaFontSize = fonts.meta;
-    const smallFontSize = isCompact ? fonts.meta : fonts.meta + 1;
+    const smallFontSize = isCompact ? fonts.small : fonts.meta;
     const buttonPaddingVertical = isTablet ? spacing(2.5) : spacing(2);
-    const buttonFontSize = isTablet ? 18 : 16;
+    const buttonFontSize = isTablet ? fonts.body + 2 : fonts.body;
     const headerTopPadding = Platform.select({
       ios: isTablet ? spacing(3) : spacing(2),
       android: isTablet ? spacing(3) : spacing(2),
@@ -44,5 +45,5 @@ export function useResponsiveValues() {
       headerTopPadding,
       headerBottomPadding,
     };
-  }, [width]);
+  }, [fonts, radius, spacing, width]);
 }

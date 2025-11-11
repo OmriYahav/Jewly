@@ -1,25 +1,47 @@
 import { DrawerContentScrollView } from "@react-navigation/drawer";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { colors, radius, spacing, fonts } from "../../src/theme";
+import { useAppearance } from "../../src/context/AppearanceContext";
 
-const GroupTitle = ({ children }) => (
-  <Text style={styles.groupTitle}>{children}</Text>
-);
+const GroupTitle = ({ children, style }) => <Text style={style}>{children}</Text>;
 
-const Item = ({ icon, label, onPress }) => (
+const Item = ({ icon, label, onPress, colors, spacing, radius, fonts }) => (
   <Pressable
     onPress={onPress}
-    style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
+    style={({ pressed }) => [
+      {
+        backgroundColor: colors.surface,
+        borderRadius: radius.md,
+        paddingVertical: spacing(1.5),
+        paddingHorizontal: spacing(2),
+        marginBottom: spacing(1),
+        flexDirection: "row-reverse",
+        alignItems: "center",
+        justifyContent: "space-between",
+        borderWidth: 1,
+        borderColor: colors.divider,
+      },
+      pressed && { opacity: 0.85 },
+    ]}
     accessibilityRole="button"
   >
-    <MaterialCommunityIcons name={icon} size={20} color={colors.brand} style={styles.itemIcon} />
-    <Text style={styles.itemLabel}>{label}</Text>
+    <MaterialCommunityIcons name={icon} size={20} color={colors.brand} style={{ marginLeft: spacing(1) }} />
+    <Text
+      style={{
+        color: colors.text,
+        fontSize: fonts.body,
+        fontWeight: "600",
+      }}
+    >
+      {label}
+    </Text>
   </Pressable>
 );
 
 export default function CustomDrawerContent(props) {
   const { navigation } = props;
+  const appearance = useAppearance();
+  const { colors, spacing, radius, fonts } = appearance;
 
   const handleNavigate = (target, params) => () => {
     if (target) {
@@ -33,78 +55,84 @@ export default function CustomDrawerContent(props) {
   return (
     <DrawerContentScrollView
       {...props}
-      contentContainerStyle={styles.container}
+      contentContainerStyle={{
+        padding: spacing(2),
+        backgroundColor: colors.drawerBackground,
+      }}
     >
-      <View style={styles.header}>
-        <Text style={styles.title}>רוֹטר.נט</Text>
-        <Text style={styles.subtitle}>פורום חדשות ודיונים</Text>
+      <View
+        style={{
+          paddingVertical: spacing(3),
+          paddingHorizontal: spacing(1),
+          alignItems: "flex-end",
+        }}
+      >
+        <Text
+          style={{
+            color: colors.text,
+            fontSize: fonts.title + 4,
+            fontWeight: "800",
+            textAlign: "right",
+          }}
+        >
+          רוֹטר.נט
+        </Text>
+        <Text
+          style={{
+            color: colors.textMuted,
+            fontSize: fonts.body,
+            textAlign: "right",
+            marginTop: 4,
+          }}
+        >
+          פורום חדשות ודיונים
+        </Text>
       </View>
 
-      <GroupTitle>פורומים</GroupTitle>
-      <Item icon="plus-circle" label="פוסט חדש" onPress={handleNavigate("post/create")} />
-      <Item icon="message-reply-text-outline" label="יש לי מה לומר" onPress={navigateToCategory("opinion", "יש לי מה לומר")} />
-      <Item icon="file-document-outline" label="גילוי מסמכים" onPress={navigateToCategory("documents", "גילוי מסמכים")} />
-      <Item icon="scale-balance" label="משפטים" onPress={navigateToCategory("law", "משפטים")} />
-      <Item icon="school-outline" label="בית המדרש" onPress={navigateToCategory("torah", "בית המדרש")} />
+      <GroupTitle
+        style={{
+          color: colors.textMuted,
+          fontSize: fonts.body,
+          marginTop: spacing(1),
+          marginBottom: spacing(1),
+          textAlign: "right",
+        }}
+      >
+        פורומים
+      </GroupTitle>
+      <Item icon="plus-circle" label="פוסט חדש" onPress={handleNavigate("post/create")} colors={colors} spacing={spacing} radius={radius} fonts={fonts} />
+      <Item icon="message-reply-text-outline" label="יש לי מה לומר" onPress={navigateToCategory("opinion", "יש לי מה לומר")} colors={colors} spacing={spacing} radius={radius} fonts={fonts} />
+      <Item icon="file-document-outline" label="גילוי מסמכים" onPress={navigateToCategory("documents", "גילוי מסמכים")} colors={colors} spacing={spacing} radius={radius} fonts={fonts} />
+      <Item icon="scale-balance" label="משפטים" onPress={navigateToCategory("law", "משפטים")} colors={colors} spacing={spacing} radius={radius} fonts={fonts} />
+      <Item icon="school-outline" label="בית המדרש" onPress={navigateToCategory("torah", "בית המדרש")} colors={colors} spacing={spacing} radius={radius} fonts={fonts} />
 
-      <GroupTitle>פרטי חשבון</GroupTitle>
-      <Item icon="login" label="התחברות" onPress={handleNavigate("login")} />
+      <GroupTitle
+        style={{
+          color: colors.textMuted,
+          fontSize: fonts.body,
+          marginTop: spacing(2),
+          marginBottom: spacing(1),
+          textAlign: "right",
+        }}
+      >
+        פרטי חשבון
+      </GroupTitle>
+      <Item icon="login" label="התחברות" onPress={handleNavigate("login")} colors={colors} spacing={spacing} radius={radius} fonts={fonts} />
 
-      <GroupTitle>שונות</GroupTitle>
-      <Item icon="cog-outline" label="הגדרות" onPress={handleNavigate("settings")} />
-      <Item icon="block-helper" label="רשימת החסומים" onPress={handleNavigate()} />
-      <Item icon="account-box-outline" label="יצירת קשר" onPress={handleNavigate()} />
+      <GroupTitle
+        style={{
+          color: colors.textMuted,
+          fontSize: fonts.body,
+          marginTop: spacing(2),
+          marginBottom: spacing(1),
+          textAlign: "right",
+        }}
+      >
+        שונות
+      </GroupTitle>
+      <Item icon="cog-outline" label="הגדרות" onPress={handleNavigate("settings")} colors={colors} spacing={spacing} radius={radius} fonts={fonts} />
+      <Item icon="block-helper" label="רשימת החסומים" onPress={handleNavigate()} colors={colors} spacing={spacing} radius={radius} fonts={fonts} />
+      <Item icon="account-box-outline" label="יצירת קשר" onPress={handleNavigate()} colors={colors} spacing={spacing} radius={radius} fonts={fonts} />
     </DrawerContentScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: spacing(2),
-    backgroundColor: colors.bg,
-  },
-  header: {
-    paddingVertical: spacing(3),
-    paddingHorizontal: spacing(1),
-  },
-  title: {
-    color: colors.text,
-    fontSize: 28,
-    fontWeight: "800",
-    textAlign: "right",
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: fonts.body,
-    textAlign: "right",
-    marginTop: 4,
-  },
-  groupTitle: {
-    color: colors.textMuted,
-    fontSize: fonts.body,
-    marginTop: spacing(2),
-    marginBottom: spacing(1),
-    textAlign: "right",
-  },
-  item: {
-    backgroundColor: colors.card,
-    borderRadius: radius.md,
-    paddingVertical: spacing(1.5),
-    paddingHorizontal: spacing(2),
-    marginBottom: spacing(1),
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  itemPressed: {
-    opacity: 0.9,
-  },
-  itemLabel: {
-    color: colors.text,
-    fontSize: fonts.body,
-    fontWeight: "600",
-  },
-  itemIcon: {
-    marginLeft: spacing(1),
-  },
-});

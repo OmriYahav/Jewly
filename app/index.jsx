@@ -6,11 +6,12 @@ import ThreadCard from "./components/ThreadCard";
 import ScreenContainer from "./components/layout/ScreenContainer";
 import { useForum } from "../src/context/ForumContext";
 import { usePreloadScreens } from "../src/hooks/usePreloadScreens";
-import { colors, radius, spacing } from "../src/theme";
+import { useAppearance } from "../src/context/AppearanceContext";
 
 export default function HomeScreen() {
   const router = useRouter();
   const { posts, categories } = useForum();
+  const { colors, spacing, radius, fonts } = useAppearance();
   const contentPadding = useMemo(
     () => ({
       paddingHorizontal: spacing(2),
@@ -85,7 +86,7 @@ export default function HomeScreen() {
               paddingVertical: spacing(10),
             }}
           >
-            <Text style={{ color: colors.textMuted, fontSize: 16 }}>
+            <Text style={{ color: colors.textMuted, fontSize: fonts.body }}>
               עדיין לא נוצרו פוסטים. בואו נהיה הראשונים!
             </Text>
           </View>
@@ -101,11 +102,11 @@ export default function HomeScreen() {
           borderRadius: radius.lg,
           paddingVertical: spacing(1.75),
           paddingHorizontal: spacing(3),
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.3,
-          shadowRadius: 12,
-          elevation: 6,
+          shadowColor: "rgba(30, 119, 195, 0.35)",
+          shadowOffset: { width: 0, height: 10 },
+          shadowOpacity: 0.4,
+          shadowRadius: 20,
+          elevation: 8,
         }}
         accessibilityRole="button"
         accessibilityLabel="יצירת פוסט חדש"
@@ -113,9 +114,9 @@ export default function HomeScreen() {
       >
         <Text
           style={{
-            color: colors.bg,
+            color: colors.surface,
             fontWeight: "700",
-            fontSize: 16,
+            fontSize: fonts.body,
           }}
         >
           כתיבה חדשה

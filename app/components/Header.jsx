@@ -3,22 +3,71 @@ import { View, Text, Pressable, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { colors, spacing, fonts, radius } from "../../src/theme";
-
-const IconButton = ({ name, onPress, accessibilityLabel }) => (
-  <Pressable
-    onPress={onPress}
-    accessibilityRole="button"
-    accessibilityLabel={accessibilityLabel}
-    style={({ pressed }) => [styles.iconButton, pressed && styles.iconButtonPressed]}
-    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-  >
-    <MaterialCommunityIcons name={name} size={22} color={colors.text} />
-  </Pressable>
-);
+import { useAppearance } from "../../src/context/AppearanceContext";
 
 export default function Header({ title, subtitle, onSearchPress }) {
   const navigation = useNavigation();
+  const { colors, spacing, fonts, radius } = useAppearance();
+
+  const styles = StyleSheet.create({
+    safeArea: {
+      backgroundColor: colors.header,
+      paddingHorizontal: spacing(2),
+      paddingTop: spacing(2),
+      paddingBottom: spacing(1.5),
+    },
+    headerRow: {
+      flexDirection: "row-reverse",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: spacing(2),
+    },
+    titleBlock: {
+      flex: 1,
+      alignItems: "flex-end",
+    },
+    title: {
+      color: colors.text,
+      fontSize: fonts.title + 6,
+      lineHeight: fonts.title + 12,
+      fontWeight: "800",
+      textAlign: "right",
+    },
+    subtitle: {
+      marginTop: 4,
+      color: colors.textMuted,
+      fontSize: fonts.body,
+      textAlign: "right",
+    },
+    iconButton: {
+      width: spacing(5),
+      height: spacing(5),
+      borderRadius: radius.md,
+      backgroundColor: colors.surface,
+      alignItems: "center",
+      justifyContent: "center",
+      borderWidth: 1,
+      borderColor: colors.divider,
+    },
+    iconButtonPressed: {
+      opacity: 0.85,
+    },
+    iconColor: {
+      color: colors.brand,
+    },
+  });
+
+  const IconButton = ({ name, onPress, accessibilityLabel }) => (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      style={({ pressed }) => [styles.iconButton, pressed && styles.iconButtonPressed]}
+      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+    >
+      <MaterialCommunityIcons name={name} size={22} color={styles.iconColor.color} />
+    </Pressable>
+  );
 
   const handleOpenDrawer = useCallback(() => {
     if (navigation?.openDrawer) {
@@ -45,53 +94,10 @@ export default function Header({ title, subtitle, onSearchPress }) {
           >
             {title}
           </Text>
-          {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
-        </View>
+        {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+      </View>
         <IconButton name="magnify" onPress={handleSearch} accessibilityLabel="חיפוש" />
       </View>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    backgroundColor: colors.bg,
-    paddingHorizontal: spacing(2),
-    paddingTop: spacing(2),
-    paddingBottom: spacing(1.5),
-  },
-  headerRow: {
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: spacing(2),
-  },
-  titleBlock: {
-    flex: 1,
-    alignItems: "flex-end",
-  },
-  title: {
-    color: colors.text,
-    fontSize: 24,
-    lineHeight: 30,
-    fontWeight: "800",
-    textAlign: "right",
-  },
-  subtitle: {
-    marginTop: 4,
-    color: colors.textMuted,
-    fontSize: fonts.body,
-    textAlign: "right",
-  },
-  iconButton: {
-    width: spacing(5),
-    height: spacing(5),
-    borderRadius: radius.md,
-    backgroundColor: colors.card,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  iconButtonPressed: {
-    opacity: 0.8,
-  },
-});
