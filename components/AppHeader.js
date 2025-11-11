@@ -64,6 +64,7 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
   );
 
   const totalHeight = BASE_HEADER_HEIGHT + NAV_BAR_HEIGHT + insets.top;
+  const headerPosition = Platform.OS === "web" ? "sticky" : "relative";
 
   const titleColor = isDarkMode ? "rgba(255,255,255,0.9)" : "#1A1A1A";
   const taglineColor = isDarkMode ? "#aaa" : "#8c8c8c";
@@ -74,8 +75,8 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
     () =>
       StyleSheet.create({
         wrapper: {
-          position: Platform.OS === "web" ? "sticky" : "absolute",
-          top: 0,
+          position: headerPosition,
+          top: headerPosition === "sticky" ? 0 : undefined,
           left: 0,
           right: 0,
           zIndex: 50,
@@ -138,7 +139,7 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
           color: iconColor,
         },
         navBar: {
-          height: NAV_BAR_HEIGHT,
+          minHeight: NAV_BAR_HEIGHT,
           marginTop: spacing(0.5),
           borderTopWidth: StyleSheet.hairlineWidth,
           borderTopColor: isDarkMode ? "rgba(255,255,255,0.08)" : "#EAEAEA",
@@ -157,6 +158,7 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
           paddingHorizontal: spacing(1.2),
           borderRadius: 999,
           marginHorizontal: spacing(0.5),
+          flexShrink: 0,
         },
         navItemText: {
           fontSize: fonts.meta + 1,
@@ -179,6 +181,7 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
       fontFamily,
       fonts.meta,
       fonts.title,
+      headerPosition,
       insets.top,
       isDarkMode,
       spacing,
@@ -305,7 +308,7 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
           </View>
         </AnimatedSafeAreaView>
       </Animated.View>
-      <View style={styles.placeholder} />
+      {headerPosition === "absolute" ? <View style={styles.placeholder} /> : null}
       <SearchModal
         visible={isSearchVisible}
         onClose={handleCloseSearch}
