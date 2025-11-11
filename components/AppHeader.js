@@ -17,15 +17,10 @@ import { useForum } from "../src/context/ForumContext";
 import SearchModal from "./SearchModal";
 
 const WINDOW_HEIGHT = Dimensions.get("window").height || 0;
-const HEADER_COMPACT_RATIO = 0.25;
-const ICON_SIZE = 24;
-const ICON_BUTTON_SIZE = 32;
-const ORIGINAL_BASE_HEADER_HEIGHT = Math.min(64, Math.max(48, WINDOW_HEIGHT * 0.08));
-const BASE_HEADER_HEIGHT = Math.max(
-  18,
-  Math.round(ORIGINAL_BASE_HEADER_HEIGHT * HEADER_COMPACT_RATIO)
-);
-const SHRINK_DISTANCE = 120;
+const ICON_SIZE = 26;
+const ICON_BUTTON_SIZE = 44;
+const BASE_HEADER_HEIGHT = Math.min(60, Math.max(48, Math.round(WINDOW_HEIGHT * 0.08)));
+const SHRINK_DISTANCE = 90;
 
 export const APP_HEADER_HEIGHT = BASE_HEADER_HEIGHT;
 
@@ -35,7 +30,7 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
   const navigation = useNavigation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { fonts, spacing, fontFamily, isDarkMode } = useAppearance();
+  const { colors, fonts, spacing, fontFamily, isDarkMode, shadow } = useAppearance();
   const { posts } = useForum();
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const effectiveScrollY = useMemo(() => scrollY ?? new Animated.Value(0), [scrollY]);
@@ -72,16 +67,14 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
   const totalHeight = BASE_HEADER_HEIGHT + insets.top;
   const headerPosition = Platform.OS === "web" ? "fixed" : "absolute";
 
-  const titleColor = isDarkMode ? "rgba(255,255,255,0.9)" : "#1A1A1A";
-  const taglineColor = isDarkMode ? "#aaa" : "#8c8c8c";
-  const iconColor = isDarkMode ? "#fff" : "#1A1A1A";
-  const surfaceColor = isDarkMode
-    ? "rgba(0, 0, 0, 0.5)"
-    : "rgba(255, 255, 255, 0.8)";
+  const titleColor = colors.text;
+  const taglineColor = colors.textMuted;
+  const iconColor = colors.text;
+  const surfaceColor = colors.surfaceGlass;
 
   const styles = useMemo(
     () => {
-      const controlGroupWidth = ICON_BUTTON_SIZE * 2 + spacing(2.25);
+      const controlGroupWidth = ICON_BUTTON_SIZE * 2 + spacing(1);
 
       return StyleSheet.create({
         wrapper: {
@@ -91,27 +84,28 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
           right: 0,
           width: "100%",
           zIndex: 50,
-          shadowColor: "#000",
-          shadowOpacity: isDarkMode ? 0.2 : 0.1,
-          shadowOffset: { width: 0, height: 2 },
-          shadowRadius: 4,
-          elevation: 3,
+          ...shadow.header,
         },
         safeArea: {
           minHeight: totalHeight,
-          paddingHorizontal: spacing(2),
-          paddingVertical: spacing(0.25),
+          paddingHorizontal: spacing(2.5),
+          paddingVertical: spacing(0.5),
           backgroundColor: surfaceColor,
           borderBottomWidth: StyleSheet.hairlineWidth,
-          borderBottomColor: isDarkMode
-            ? "rgba(255,255,255,0.18)"
-            : "rgba(26,26,26,0.08)",
+          borderBottomColor: colors.headerBorder,
+          borderBottomLeftRadius: spacing(2.5),
+          borderBottomRightRadius: spacing(2.5),
           ...Platform.select({
             web: {
               backdropFilter: "blur(10px)",
               WebkitBackdropFilter: "blur(10px)",
             },
-            default: {},
+            ios: {
+              backgroundColor: surfaceColor,
+            },
+            default: {
+              backgroundColor: surfaceColor,
+            },
           }),
         },
         headerContainer: {
@@ -119,7 +113,7 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
-          paddingHorizontal: spacing(0.5),
+          paddingHorizontal: spacing(0.75),
         },
         titleBlock: {
           flex: 1,
@@ -128,29 +122,31 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
         },
         title: {
           color: titleColor,
-          fontSize: Math.max(14, fonts.title - 2),
-          lineHeight: Math.max(16, fonts.title),
-          fontWeight: "700",
+          fontSize: Math.max(16, fonts.title - 1),
+          lineHeight: Math.max(16, (fonts.title - 1) * 1.5),
+          fontWeight: "600",
           textAlign: "center",
           letterSpacing: 0.3,
           fontFamily,
         },
         tagline: {
           color: taglineColor,
-          fontSize: 8,
-          lineHeight: 10,
-          fontWeight: "300",
+          fontSize: Math.max(10, fonts.meta - 1),
+          lineHeight: Math.max(12, (fonts.meta - 1) * 1.5),
+          fontWeight: "400",
           textAlign: "center",
-          marginTop: 0,
+          marginTop: spacing(0.25),
+          opacity: 0.7,
           fontFamily,
         },
         subtitle: {
           color: taglineColor,
-          fontSize: Math.max(10, fonts.meta - 1),
-          lineHeight: Math.max(12, fonts.meta),
+          fontSize: Math.max(11, fonts.meta),
+          lineHeight: Math.max(14, fonts.meta * 1.5),
           fontWeight: "400",
           textAlign: "center",
-          marginTop: 0,
+          marginTop: spacing(0.25),
+          opacity: 0.7,
           fontFamily,
         },
         iconButton: {
@@ -161,26 +157,32 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
           justifyContent: "center",
           backgroundColor: isDarkMode
             ? "rgba(255,255,255,0.08)"
-            : "rgba(0,0,0,0.04)",
+            : "rgba(76,141,255,0.08)",
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: isDarkMode
+            ? "rgba(255,255,255,0.12)"
+            : "rgba(76,141,255,0.18)",
         },
         leftControls: {
           width: controlGroupWidth,
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "flex-start",
+          columnGap: spacing(1),
         },
         rightControls: {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "flex-end",
           width: controlGroupWidth,
+          columnGap: spacing(1),
         },
         spacer: {
           width: ICON_BUTTON_SIZE,
           height: ICON_BUTTON_SIZE,
         },
         searchButton: {
-          marginRight: spacing(0.75),
+          marginRight: 0,
         },
         iconText: {
           color: iconColor,
@@ -194,6 +196,8 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
       });
     },
     [
+      colors.headerBorder,
+      colors.surfaceGlass,
       fontFamily,
       fonts.title,
       fonts.meta,
@@ -201,11 +205,11 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
       insets.top,
       isDarkMode,
       spacing,
-      surfaceColor,
       taglineColor,
       titleColor,
       totalHeight,
       iconColor,
+      shadow.header,
     ]
   );
 
