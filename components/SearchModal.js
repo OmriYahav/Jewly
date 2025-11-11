@@ -1,13 +1,24 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FlatList, Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  FlatList,
+  Keyboard,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useAppearance } from "../src/context/AppearanceContext";
 
 export default function SearchModal({ visible, onClose, posts = [], onSelectResult }) {
   const { colors, spacing, fonts, radius, fontFamily, shadow } = useAppearance();
+  const [inputValue, setInputValue] = useState("");
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const handleClose = useCallback(() => {
     if (typeof onClose === "function") {
@@ -17,16 +28,33 @@ export default function SearchModal({ visible, onClose, posts = [], onSelectResu
 
   useEffect(() => {
     if (!visible) {
+      setInputValue("");
       setQuery("");
       setResults([]);
+      setHasSearched(false);
     }
   }, [visible]);
 
   const normalizedPosts = useMemo(() => (Array.isArray(posts) ? posts : []), [posts]);
 
-  const handleSearch = useCallback((text) => {
-    setQuery(text);
+  const handleChangeText = useCallback((text) => {
+    setInputValue(text);
   }, []);
+
+  const handleSubmitSearch = useCallback(() => {
+    Keyboard.dismiss();
+    const normalizedQuery = inputValue.trim();
+
+    if (normalizedQuery.length === 0) {
+      setHasSearched(false);
+      setQuery("");
+      setResults([]);
+      return;
+    }
+
+    setHasSearched(true);
+    setQuery(normalizedQuery);
+  }, [inputValue]);
 
   useEffect(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase();
@@ -110,6 +138,23 @@ export default function SearchModal({ visible, onClose, posts = [], onSelectResu
           textAlign: "right",
           fontFamily,
         },
+        searchButton: {
+          backgroundColor: colors.brand ?? colors.accent,
+          borderRadius: radius.md,
+          paddingVertical: spacing(1.75),
+          paddingHorizontal: spacing(2),
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "row-reverse",
+          columnGap: spacing(1),
+        },
+        searchButtonText: {
+          color: "#FFFFFF",
+          fontSize: fonts.body,
+          fontWeight: "600",
+          fontFamily,
+          letterSpacing: 0.4,
+        },
         results: {
           flex: 1,
         },
@@ -154,6 +199,7 @@ export default function SearchModal({ visible, onClose, posts = [], onSelectResu
       }),
     [
       colors.accent,
+      colors.brand,
       colors.cardBorder,
       colors.divider,
       colors.highlightBorder,
@@ -190,7 +236,7 @@ export default function SearchModal({ visible, onClose, posts = [], onSelectResu
     [handleSelect, styles]
   );
 
-  const keyExtractor = useCallback((item) => item.id, []);
+  const keyExtractor = useCallback((item) => String(item.id), []);
 
   return (
     <Modal
@@ -215,24 +261,40 @@ export default function SearchModal({ visible, onClose, posts = [], onSelectResu
           </View>
 
           <TextInput
-            value={query}
-            onChangeText={handleSearch}
+            value={inputValue}
+            onChangeText={handleChangeText}
             placeholder="חיפוש בכל הפורומים..."
             placeholderTextColor={colors.textMuted}
             style={styles.input}
             autoFocus
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
+            returnKeyType="search"
+            onSubmitEditing={handleSubmitSearch}
           />
 
+          <Pressable
+            onPress={handleSubmitSearch}
+            style={({ pressed }) => [styles.searchButton, pressed && { opacity: 0.9 }]}
+            accessibilityRole="button"
+            accessibilityLabel="ביצוע חיפוש"
+          >
+            <Ionicons name="search" size={18} color="#FFFFFF" />
+            <Text style={styles.searchButtonText}>חיפוש</Text>
+          </Pressable>
+
           <View style={styles.results}>
-            {query.trim().length > 0 && results.length === 0 ? (
+            {!hasSearched ? (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyText}>הקלד מונח ולחץ על כפתור החיפוש כדי לראות תוצאות.</Text>
+              </View>
+            ) : query.trim().length > 0 && results.length === 0 ? (
               <View style={styles.emptyState}>
                 <Text style={styles.emptyText}>לא נמצאו תוצאות.</Text>
               </View>
             ) : (
               <FlatList
-                data={results}
+                data={hasSearched ? results : []}
                 keyExtractor={keyExtractor}
                 renderItem={renderResult}
                 keyboardShouldPersistTaps="handled"
