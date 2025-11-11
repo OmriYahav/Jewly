@@ -17,8 +17,14 @@ import { useForum } from "../src/context/ForumContext";
 import SearchModal from "./SearchModal";
 
 const WINDOW_HEIGHT = Dimensions.get("window").height || 0;
+const HEADER_COMPACT_RATIO = 0.25;
+const ICON_SIZE = 24;
+const ICON_BUTTON_SIZE = 32;
 const ORIGINAL_BASE_HEADER_HEIGHT = Math.min(64, Math.max(48, WINDOW_HEIGHT * 0.08));
-const BASE_HEADER_HEIGHT = Math.max(24, Math.round(ORIGINAL_BASE_HEADER_HEIGHT / 3));
+const BASE_HEADER_HEIGHT = Math.max(
+  18,
+  Math.round(ORIGINAL_BASE_HEADER_HEIGHT * HEADER_COMPACT_RATIO)
+);
 const SHRINK_DISTANCE = 120;
 
 export const APP_HEADER_HEIGHT = BASE_HEADER_HEIGHT;
@@ -74,8 +80,10 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
     : "rgba(255, 255, 255, 0.8)";
 
   const styles = useMemo(
-    () =>
-      StyleSheet.create({
+    () => {
+      const controlGroupWidth = ICON_BUTTON_SIZE * 2 + spacing(2.25);
+
+      return StyleSheet.create({
         wrapper: {
           position: headerPosition,
           top: 0,
@@ -92,6 +100,7 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
         safeArea: {
           minHeight: totalHeight,
           paddingHorizontal: spacing(2),
+          paddingVertical: spacing(0.25),
           backgroundColor: surfaceColor,
           borderBottomWidth: StyleSheet.hairlineWidth,
           borderBottomColor: isDarkMode
@@ -110,7 +119,7 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
-          paddingHorizontal: spacing(1),
+          paddingHorizontal: spacing(0.5),
         },
         titleBlock: {
           flex: 1,
@@ -128,8 +137,8 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
         },
         tagline: {
           color: taglineColor,
-          fontSize: 9,
-          lineHeight: 11,
+          fontSize: 8,
+          lineHeight: 10,
           fontWeight: "300",
           textAlign: "center",
           marginTop: 0,
@@ -145,9 +154,9 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
           fontFamily,
         },
         iconButton: {
-          width: 26,
-          height: 26,
-          borderRadius: 13,
+          width: ICON_BUTTON_SIZE,
+          height: ICON_BUTTON_SIZE,
+          borderRadius: ICON_BUTTON_SIZE / 2,
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: isDarkMode
@@ -155,19 +164,20 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
             : "rgba(0,0,0,0.04)",
         },
         leftControls: {
-          width: 48,
-          alignItems: "flex-start",
-          justifyContent: "center",
+          width: controlGroupWidth,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "flex-start",
         },
         rightControls: {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "flex-end",
-          width: 96,
+          width: controlGroupWidth,
         },
         spacer: {
-          width: 26,
-          height: 26,
+          width: ICON_BUTTON_SIZE,
+          height: ICON_BUTTON_SIZE,
         },
         searchButton: {
           marginRight: spacing(0.75),
@@ -178,7 +188,11 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
         placeholder: {
           minHeight: totalHeight,
         },
-      }),
+        controlFiller: {
+          flex: 1,
+        },
+      });
+    },
     [
       fontFamily,
       fonts.title,
@@ -245,7 +259,7 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
                 >
                   <MaterialCommunityIcons
                     name={I18nManager.isRTL ? "arrow-right" : "arrow-left"}
-                    size={20}
+                    size={ICON_SIZE}
                     color={iconColor}
                     style={styles.iconText}
                   />
@@ -253,6 +267,7 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
               ) : (
                 <View style={styles.spacer} />
               )}
+              <View style={styles.controlFiller} />
             </View>
 
             <View style={styles.titleBlock}>
@@ -279,7 +294,7 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
               >
                 <MaterialCommunityIcons
                   name="magnify"
-                  size={20}
+                  size={ICON_SIZE}
                   color={iconColor}
                   style={styles.iconText}
                 />
@@ -296,7 +311,7 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
                 >
                   <MaterialCommunityIcons
                     name="menu"
-                    size={20}
+                    size={ICON_SIZE}
                     color={iconColor}
                     style={styles.iconText}
                   />
