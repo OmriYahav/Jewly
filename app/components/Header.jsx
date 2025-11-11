@@ -1,13 +1,18 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAppearance } from "../../src/context/AppearanceContext";
+import { useForum } from "../../src/context/ForumContext";
+import SearchModal from "../../components/SearchModal";
 
 export default function Header({ title, subtitle, onSearchPress }) {
   const navigation = useNavigation();
+  const router = useRouter();
   const { colors, spacing, fonts, radius } = useAppearance();
+  const { posts } = useForum();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const styles = StyleSheet.create({
     safeArea: {
@@ -76,28 +81,49 @@ export default function Header({ title, subtitle, onSearchPress }) {
   }, [navigation]);
 
   const handleSearch = useCallback(() => {
+    setIsSearchOpen(true);
     if (typeof onSearchPress === "function") {
       onSearchPress();
     }
   }, [onSearchPress]);
 
+  const handleCloseSearch = useCallback(() => {
+    setIsSearchOpen(false);
+  }, []);
+
+  const handleSelectResult = useCallback(
+    (postId) => {
+      setIsSearchOpen(false);
+      router.push({ pathname: "/post/[id]", params: { id: postId } });
+    },
+    [router]
+  );
+
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
-      <View style={styles.headerRow}>
-        <IconButton name="menu" onPress={handleOpenDrawer} accessibilityLabel="פתיחת תפריט" />
-        <View style={styles.titleBlock}>
-          <Text
-            style={styles.title}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.8}
-          >
-            {title}
-          </Text>
-        {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
-      </View>
-        <IconButton name="magnify" onPress={handleSearch} accessibilityLabel="חיפוש" />
-      </View>
-    </SafeAreaView>
+    <>
+      <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
+        <View style={styles.headerRow}>
+          <IconButton name="menu" onPress={handleOpenDrawer} accessibilityLabel="פתיחת תפריט" />
+          <View style={styles.titleBlock}>
+            <Text
+              style={styles.title}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.8}
+            >
+              {title}
+            </Text>
+            {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+          </View>
+          <IconButton name="magnify" onPress={handleSearch} accessibilityLabel="חיפוש" />
+        </View>
+      </SafeAreaView>
+      <SearchModal
+        visible={isSearchOpen}
+        onClose={handleCloseSearch}
+        posts={posts}
+        onSelectResult={handleSelectResult}
+      />
+    </>
   );
 }

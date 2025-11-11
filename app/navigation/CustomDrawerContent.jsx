@@ -1,16 +1,19 @@
 import { DrawerContentScrollView } from "@react-navigation/drawer";
 import { View, Text, Pressable } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { useAppearance } from "../../src/context/AppearanceContext";
 
 const GroupTitle = ({ children, style }) => <Text style={style}>{children}</Text>;
 
-const Item = ({ icon, label, onPress, colors, spacing, radius, fonts }) => (
-  <Pressable
-    onPress={onPress}
-    style={({ pressed }) => [
-      {
-        backgroundColor: colors.surface,
+const Item = ({ icon, label, onPress, colors, spacing, radius, fonts, iconLibrary = "material" }) => {
+  const IconComponent = iconLibrary === "ion" ? Ionicons : MaterialCommunityIcons;
+
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        {
+          backgroundColor: colors.surface,
         borderRadius: radius.md,
         paddingVertical: spacing(1.5),
         paddingHorizontal: spacing(2),
@@ -25,7 +28,7 @@ const Item = ({ icon, label, onPress, colors, spacing, radius, fonts }) => (
     ]}
     accessibilityRole="button"
   >
-    <MaterialCommunityIcons name={icon} size={20} color={colors.brand} style={{ marginLeft: spacing(1) }} />
+    <IconComponent name={icon} size={20} color={colors.brand} style={{ marginLeft: spacing(1) }} />
     <Text
       style={{
         color: colors.text,
@@ -36,7 +39,8 @@ const Item = ({ icon, label, onPress, colors, spacing, radius, fonts }) => (
       {label}
     </Text>
   </Pressable>
-);
+  );
+};
 
 export default function CustomDrawerContent(props) {
   const { navigation } = props;
@@ -104,7 +108,16 @@ export default function CustomDrawerContent(props) {
       <Item icon="message-reply-text-outline" label="יש לי מה לומר" onPress={navigateToCategory("opinion", "יש לי מה לומר")} colors={colors} spacing={spacing} radius={radius} fonts={fonts} />
       <Item icon="file-document-outline" label="גילוי מסמכים" onPress={navigateToCategory("documents", "גילוי מסמכים")} colors={colors} spacing={spacing} radius={radius} fonts={fonts} />
       <Item icon="scale-balance" label="משפטים" onPress={navigateToCategory("law", "משפטים")} colors={colors} spacing={spacing} radius={radius} fonts={fonts} />
-      <Item icon="school-outline" label="בית המדרש" onPress={navigateToCategory("torah", "בית המדרש")} colors={colors} spacing={spacing} radius={radius} fonts={fonts} />
+      <Item
+        icon="megaphone-outline"
+        label="סקופים"
+        onPress={handleNavigate("scoop-forum")}
+        colors={colors}
+        spacing={spacing}
+        radius={radius}
+        fonts={fonts}
+        iconLibrary="ion"
+      />
 
       <GroupTitle
         style={{
