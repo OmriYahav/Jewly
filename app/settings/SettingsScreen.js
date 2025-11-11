@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { ScrollView, View, Text, StyleSheet } from "react-native";
-import { Button, Divider, Slider } from "react-native-paper";
+import { Button, Divider } from "react-native-paper";
+import Slider from "@react-native-community/slider";
 import Header from "../components/Header";
 import ScreenContainer from "../components/layout/ScreenContainer";
 import { useAppearance } from "../../src/context/AppearanceContext";
