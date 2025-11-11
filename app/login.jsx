@@ -4,12 +4,13 @@ import { useRouter } from "expo-router";
 import Header from "./components/Header";
 import ScreenContainer from "./components/layout/ScreenContainer";
 import { useResponsiveValues } from "../src/hooks/useResponsiveValues";
-import { colors, spacing, radius } from "../src/theme";
+import { useAppearance } from "../src/context/AppearanceContext";
 
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const { colors, spacing, radius } = useAppearance();
   const {
     containerPadding,
     cardPadding,
@@ -38,18 +39,18 @@ export default function LoginScreen() {
         >
           <View
             style={{
-              backgroundColor: colors.card,
+              backgroundColor: colors.surface,
               borderRadius: cardRadius,
               padding: cardPadding,
               borderWidth: 1,
               borderColor: colors.divider,
+              gap: cardSpacing,
             }}
           >
             <Text
               style={{
                 color: colors.text,
                 fontSize: bodyFontSize,
-                marginBottom: cardSpacing / 2,
                 textAlign: "right",
                 fontWeight: "600",
               }}
@@ -58,7 +59,7 @@ export default function LoginScreen() {
             </Text>
             <TextInput
               style={{
-                backgroundColor: colors.bg,
+                backgroundColor: colors.background,
                 color: colors.text,
                 borderRadius: cardRadius - 6,
                 paddingHorizontal: spacing(2),
@@ -69,7 +70,7 @@ export default function LoginScreen() {
                 textAlign: "right",
               }}
               placeholder="הקלד שם משתמש"
-              placeholderTextColor="rgba(232, 238, 242, 0.4)"
+              placeholderTextColor="rgba(71, 85, 105, 0.35)"
               value={username}
               onChangeText={setUsername}
             />
@@ -77,8 +78,6 @@ export default function LoginScreen() {
               style={{
                 color: colors.text,
                 fontSize: bodyFontSize,
-                marginTop: cardSpacing,
-                marginBottom: cardSpacing / 2,
                 textAlign: "right",
                 fontWeight: "600",
               }}
@@ -87,7 +86,7 @@ export default function LoginScreen() {
             </Text>
             <TextInput
               style={{
-                backgroundColor: colors.bg,
+                backgroundColor: colors.background,
                 color: colors.text,
                 borderRadius: cardRadius - 6,
                 paddingHorizontal: spacing(2),
@@ -98,7 +97,7 @@ export default function LoginScreen() {
                 textAlign: "right",
               }}
               placeholder="הקלד סיסמה"
-              placeholderTextColor="rgba(232, 238, 242, 0.4)"
+              placeholderTextColor="rgba(71, 85, 105, 0.35)"
               secureTextEntry
               value={password}
               onChangeText={setPassword}
@@ -108,7 +107,7 @@ export default function LoginScreen() {
                 backgroundColor: colors.brand,
                 borderRadius: radius.lg,
                 paddingVertical: buttonPaddingVertical,
-                marginTop: cardSpacing * 1.5,
+                marginTop: cardSpacing * 0.5,
               }}
               activeOpacity={0.85}
               onPress={handleSubmit}
@@ -116,7 +115,7 @@ export default function LoginScreen() {
             >
               <Text
                 style={{
-                  color: colors.bg,
+                  color: colors.surface,
                   textAlign: "center",
                   fontSize: buttonFontSize,
                   fontWeight: "700",

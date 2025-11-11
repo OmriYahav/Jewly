@@ -5,12 +5,13 @@ import Header from "../components/Header";
 import ThreadCard from "../components/ThreadCard";
 import ScreenContainer from "../components/layout/ScreenContainer";
 import { useForum } from "../../src/context/ForumContext";
-import { spacing, colors, fonts, radius } from "../../src/theme";
+import { useAppearance } from "../../src/context/AppearanceContext";
 
 export default function ForumCategoryScreen() {
   const { category } = useLocalSearchParams();
   const router = useRouter();
   const { posts, categories } = useForum();
+  const { spacing, colors, fonts, radius } = useAppearance();
   const normalizedCategory = Array.isArray(category) ? category[0] : category;
   const forum = useMemo(
     () => categories.find((item) => item.key === normalizedCategory),
@@ -95,25 +96,25 @@ export default function ForumCategoryScreen() {
           borderRadius: radius.lg,
           paddingVertical: spacing(1.75),
           paddingHorizontal: spacing(3),
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.3,
-          shadowRadius: 12,
-          elevation: 6,
+          shadowColor: "rgba(30, 119, 195, 0.35)",
+          shadowOffset: { width: 0, height: 10 },
+          shadowOpacity: 0.4,
+          shadowRadius: 20,
+          elevation: 8,
         }}
         accessibilityRole="button"
         accessibilityLabel="פתיחת פוסט חדש"
         activeOpacity={0.9}
       >
-        <Text
-          style={{
-            color: colors.bg,
-            fontWeight: "700",
-            fontSize: 16,
-          }}
-        >
-          פוסט חדש
-        </Text>
+          <Text
+            style={{
+              color: colors.surface,
+              fontWeight: "700",
+              fontSize: fonts.body,
+            }}
+          >
+            פוסט חדש
+          </Text>
       </TouchableOpacity>
     </ScreenContainer>
   );

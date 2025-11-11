@@ -13,7 +13,7 @@ import Header from "../components/Header";
 import ScreenContainer from "../components/layout/ScreenContainer";
 import { useForum } from "../../src/context/ForumContext";
 import { useResponsiveValues } from "../../src/hooks/useResponsiveValues";
-import { colors, spacing, radius } from "../../src/theme";
+import { useAppearance } from "../../src/context/AppearanceContext";
 
 export default function PostScreen() {
   const { id } = useLocalSearchParams();
@@ -33,6 +33,7 @@ export default function PostScreen() {
     cardSpacing,
     smallFontSize,
   } = useResponsiveValues();
+  const { colors, spacing, radius, rowHighlight } = useAppearance();
 
   const [commentAuthor, setCommentAuthor] = useState("");
   const [commentText, setCommentText] = useState("");
@@ -51,6 +52,28 @@ export default function PostScreen() {
     setCommentAuthor("");
   }, [addComment, commentAuthor, commentText, normalizedId]);
 
+  const commentHighlightStyles = useMemo(() => {
+    switch (rowHighlight) {
+      case "filled":
+        return {
+          container: {
+            backgroundColor: colors.highlight,
+            borderColor: colors.highlightBorder,
+          },
+        };
+      case "none":
+        return { container: {} };
+      default:
+        return {
+          container: {
+            borderRightWidth: 4,
+            borderRightColor: colors.highlightBorder,
+            paddingRight: spacing(1.5),
+          },
+        };
+    }
+  }, [colors.highlight, colors.highlightBorder, rowHighlight, spacing]);
+
   return (
     <ScreenContainer>
       <Header title={post?.title ?? "פוסט"} subtitle={`מאת ${post?.author ?? "משתמש"}`} />
@@ -66,7 +89,7 @@ export default function PostScreen() {
         >
           <View
             style={{
-              backgroundColor: colors.card,
+              backgroundColor: colors.surface,
               borderRadius: cardRadius,
               padding: cardPadding,
               marginBottom: cardSpacing * 1.5,
@@ -99,7 +122,7 @@ export default function PostScreen() {
           {comments.length === 0 ? (
             <View
               style={{
-                backgroundColor: colors.card,
+                backgroundColor: colors.surface,
                 borderRadius: cardRadius,
                 padding: cardPadding,
                 borderWidth: 1,
@@ -120,14 +143,17 @@ export default function PostScreen() {
             comments.map((comment) => (
               <View
                 key={comment.id}
-                style={{
-                  backgroundColor: colors.card,
-                  borderRadius: cardRadius,
-                  padding: cardPadding,
-                  marginBottom: cardSpacing,
-                  borderWidth: 1,
-                  borderColor: colors.divider,
-                }}
+                style={[
+                  {
+                    backgroundColor: colors.surface,
+                    borderRadius: cardRadius,
+                    padding: cardPadding,
+                    marginBottom: cardSpacing,
+                    borderWidth: 1,
+                    borderColor: colors.divider,
+                  },
+                  commentHighlightStyles.container,
+                ]}
               >
                 <View
                   style={{
@@ -169,12 +195,12 @@ export default function PostScreen() {
           style={{
             paddingHorizontal: containerPadding,
             paddingBottom: cardSpacing * 1.5,
-            backgroundColor: "rgba(14, 17, 22, 0.92)",
+            backgroundColor: colors.background,
           }}
         >
           <View
             style={{
-              backgroundColor: colors.card,
+              backgroundColor: colors.surface,
               borderRadius: cardRadius,
               padding: cardPadding,
               borderWidth: 1,
@@ -194,7 +220,7 @@ export default function PostScreen() {
             </Text>
             <TextInput
               style={{
-                backgroundColor: colors.bg,
+                backgroundColor: colors.background,
                 color: colors.text,
                 borderRadius: radius.md,
                 paddingHorizontal: spacing(2),
@@ -206,13 +232,13 @@ export default function PostScreen() {
                 marginBottom: spacing(1),
               }}
               placeholder="שם (לא חובה)"
-              placeholderTextColor="rgba(232,238,242,0.45)"
+              placeholderTextColor="rgba(71,85,105,0.35)"
               value={commentAuthor}
               onChangeText={setCommentAuthor}
             />
             <TextInput
               style={{
-                backgroundColor: colors.bg,
+                backgroundColor: colors.background,
                 color: colors.text,
                 borderRadius: radius.md,
                 paddingHorizontal: spacing(2),
@@ -225,16 +251,18 @@ export default function PostScreen() {
                 marginBottom: spacing(1.5),
               }}
               placeholder="מה יש לכם לומר?"
-              placeholderTextColor="rgba(232,238,242,0.45)"
+              placeholderTextColor="rgba(71,85,105,0.35)"
               value={commentText}
               onChangeText={setCommentText}
               multiline
             />
             <TouchableOpacity
               style={{
-                backgroundColor: commentText.trim().length === 0 ? colors.divider : colors.brand,
+                backgroundColor: commentText.trim().length === 0 ? colors.subtleBackground : colors.brand,
                 borderRadius: radius.lg,
                 paddingVertical: buttonPaddingVertical,
+                borderWidth: commentText.trim().length === 0 ? 1 : 0,
+                borderColor: colors.divider,
               }}
               activeOpacity={0.9}
               onPress={handleSubmitComment}
@@ -243,7 +271,7 @@ export default function PostScreen() {
             >
               <Text
                 style={{
-                  color: colors.bg,
+                  color: commentText.trim().length === 0 ? colors.textMuted : colors.surface,
                   textAlign: "center",
                   fontSize: buttonFontSize,
                   fontWeight: "700",

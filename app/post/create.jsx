@@ -13,7 +13,7 @@ import Header from "../components/Header";
 import ScreenContainer from "../components/layout/ScreenContainer";
 import { useForum } from "../../src/context/ForumContext";
 import { useResponsiveValues } from "../../src/hooks/useResponsiveValues";
-import { colors, spacing, radius } from "../../src/theme";
+import { useAppearance } from "../../src/context/AppearanceContext";
 
 export default function CreatePostScreen() {
   const router = useRouter();
@@ -30,6 +30,7 @@ export default function CreatePostScreen() {
     buttonFontSize,
     cardSpacing,
   } = useResponsiveValues();
+  const { colors, spacing, radius } = useAppearance();
 
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
@@ -78,7 +79,7 @@ export default function CreatePostScreen() {
         >
           <View
             style={{
-              backgroundColor: colors.card,
+              backgroundColor: colors.surface,
               borderRadius: cardRadius,
               padding: cardPadding,
               borderWidth: 1,
@@ -100,7 +101,7 @@ export default function CreatePostScreen() {
               </Text>
               <TextInput
                 style={{
-                  backgroundColor: colors.bg,
+                  backgroundColor: colors.background,
                   color: colors.text,
                   borderRadius: radius.md,
                   paddingHorizontal: spacing(2),
@@ -111,7 +112,7 @@ export default function CreatePostScreen() {
                   textAlign: "right",
                 }}
                 placeholder="על מה תרצו לדבר?"
-                placeholderTextColor="rgba(232,238,242,0.45)"
+                placeholderTextColor="rgba(71,85,105,0.35)"
                 value={title}
                 onChangeText={setTitle}
               />
@@ -139,8 +140,8 @@ export default function CreatePostScreen() {
                       style={{
                         borderRadius: radius.md,
                         borderWidth: 1,
-                        borderColor: isSelected ? colors.brand : colors.divider,
-                        backgroundColor: isSelected ? "rgba(46,124,246,0.18)" : "rgba(255,255,255,0.03)",
+                        borderColor: isSelected ? colors.highlightBorder : colors.divider,
+                        backgroundColor: isSelected ? colors.highlight : colors.subtleBackground,
                         paddingVertical: spacing(1.25),
                         paddingHorizontal: spacing(2),
                       }}
@@ -148,7 +149,7 @@ export default function CreatePostScreen() {
                     >
                       <Text
                         style={{
-                          color: colors.text,
+                          color: isSelected ? colors.brand : colors.text,
                           fontSize: bodyFontSize,
                           textAlign: "right",
                           fontWeight: isSelected ? "700" : "500",
@@ -176,7 +177,7 @@ export default function CreatePostScreen() {
               </Text>
               <TextInput
                 style={{
-                  backgroundColor: colors.bg,
+                  backgroundColor: colors.background,
                   color: colors.text,
                   borderRadius: radius.md,
                   paddingHorizontal: spacing(2),
@@ -187,7 +188,7 @@ export default function CreatePostScreen() {
                   textAlign: "right",
                 }}
                 placeholder="למי לתת קרדיט?"
-                placeholderTextColor="rgba(232,238,242,0.45)"
+                placeholderTextColor="rgba(71,85,105,0.35)"
                 value={author}
                 onChangeText={setAuthor}
               />
@@ -207,7 +208,7 @@ export default function CreatePostScreen() {
               </Text>
               <TextInput
                 style={{
-                  backgroundColor: colors.bg,
+                  backgroundColor: colors.background,
                   color: colors.text,
                   borderRadius: radius.md,
                   paddingHorizontal: spacing(2),
@@ -218,7 +219,7 @@ export default function CreatePostScreen() {
                   textAlign: "right",
                 }}
                 placeholder="לדוגמה: דיווח מיוחד"
-                placeholderTextColor="rgba(232,238,242,0.45)"
+                placeholderTextColor="rgba(71,85,105,0.35)"
                 value={tag}
                 onChangeText={setTag}
               />
@@ -238,7 +239,7 @@ export default function CreatePostScreen() {
               </Text>
               <TextInput
                 style={{
-                  backgroundColor: colors.bg,
+                  backgroundColor: colors.background,
                   color: colors.text,
                   borderRadius: radius.md,
                   paddingHorizontal: spacing(2),
@@ -250,7 +251,7 @@ export default function CreatePostScreen() {
                   minHeight: spacing(20),
                 }}
                 placeholder="ספרו לנו את כל הפרטים החשובים..."
-                placeholderTextColor="rgba(232,238,242,0.45)"
+                placeholderTextColor="rgba(71,85,105,0.35)"
                 value={content}
                 onChangeText={setContent}
                 multiline
@@ -269,9 +270,11 @@ export default function CreatePostScreen() {
 
             <TouchableOpacity
               style={{
-                backgroundColor: isValid ? colors.brand : colors.divider,
+                backgroundColor: isValid ? colors.brand : colors.subtleBackground,
                 borderRadius: radius.lg,
                 paddingVertical: buttonPaddingVertical,
+                borderWidth: isValid ? 0 : 1,
+                borderColor: colors.divider,
               }}
               activeOpacity={0.9}
               onPress={handleCreatePost}
@@ -280,7 +283,7 @@ export default function CreatePostScreen() {
             >
               <Text
                 style={{
-                  color: colors.bg,
+                  color: isValid ? colors.surface : colors.textMuted,
                   textAlign: "center",
                   fontSize: buttonFontSize,
                   fontWeight: "700",
