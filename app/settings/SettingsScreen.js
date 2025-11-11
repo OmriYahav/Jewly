@@ -1,8 +1,8 @@
-import { useCallback, useMemo } from "react";
-import { ScrollView, View, Text, StyleSheet } from "react-native";
+import { useCallback, useMemo, useRef } from "react";
+import { Animated, View, Text, StyleSheet } from "react-native";
 import { Button, Divider } from "react-native-paper";
 import Slider from "@react-native-community/slider";
-import Header from "../components/Header";
+import AppHeader from "../../components/AppHeader";
 import { withScreenWrapper } from "../components/layout/ScreenWrapper";
 import { useAppearance } from "../../src/context/AppearanceContext";
 import { useResponsiveValues } from "../../src/hooks/useResponsiveValues";
@@ -26,6 +26,7 @@ function SettingsScreen() {
     spacing,
     radius,
     fonts,
+    fontFamily,
     themeMode,
     setThemeMode,
     rowHighlight,
@@ -33,6 +34,7 @@ function SettingsScreen() {
     textScale,
     setTextScale,
   } = appearance;
+  const scrollY = useRef(new Animated.Value(0)).current;
   const { cardRadius } = useResponsiveValues();
 
   const styles = useMemo(
@@ -64,11 +66,13 @@ function SettingsScreen() {
           fontSize: fonts.title + 2,
           fontWeight: "700",
           textAlign: "right",
+          fontFamily,
         },
         sectionSubtitle: {
           color: colors.textMuted,
           fontSize: fonts.meta,
           textAlign: "right",
+          fontFamily,
         },
         buttonRow: {
           flexDirection: "row-reverse",
@@ -91,6 +95,7 @@ function SettingsScreen() {
           fontSize: fonts.meta,
           fontWeight: "700",
           textAlign: "left",
+          fontFamily,
         },
         previewContainer: {
           backgroundColor: colors.subtleBackground,
@@ -102,6 +107,7 @@ function SettingsScreen() {
           fontSize: fonts.meta,
           textAlign: "right",
           marginBottom: spacing(1),
+          fontFamily,
         },
         previewText: {
           color: colors.text,
@@ -109,9 +115,10 @@ function SettingsScreen() {
           lineHeight: (fonts.body + 2) * 1.5,
           textAlign: "right",
           fontWeight: "500",
+          fontFamily,
         },
       }),
-    [cardRadius, colors.brand, colors.divider, colors.subtleBackground, colors.surface, colors.text, colors.textMuted, fonts.body, fonts.meta, fonts.title, radius.md, spacing]
+    [cardRadius, colors.brand, colors.divider, colors.subtleBackground, colors.surface, colors.text, colors.textMuted, fontFamily, fonts.body, fonts.meta, fonts.title, radius.md, spacing]
   );
 
   const handleThemeChange = useCallback(
@@ -160,6 +167,7 @@ function SettingsScreen() {
             labelStyle={{
               fontSize: fonts.body,
               fontWeight: isSelected ? "700" : "500",
+              fontFamily,
             }}
           >
             {option.label}
@@ -171,11 +179,16 @@ function SettingsScreen() {
 
   return (
     <>
-      <Header title="הגדרות" subtitle="התאמה אישית של האפליקציה" />
-      <ScrollView
+      <AppHeader title="הגדרות" subtitle="התאמה אישית של האפליקציה" scrollY={scrollY} />
+      <Animated.ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
+        scrollEventThrottle={16}
       >
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>ערכת נושא</Text>
@@ -215,7 +228,7 @@ function SettingsScreen() {
             </Text>
           </View>
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
     </>
   );
 }
