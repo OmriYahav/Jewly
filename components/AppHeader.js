@@ -17,7 +17,7 @@ import { useForum } from "../src/context/ForumContext";
 import SearchModal from "./SearchModal";
 
 const WINDOW_HEIGHT = Dimensions.get("window").height || 0;
-const BASE_HEADER_HEIGHT = Math.min(70, Math.max(60, WINDOW_HEIGHT * 0.1));
+const BASE_HEADER_HEIGHT = Math.min(64, Math.max(48, WINDOW_HEIGHT * 0.08));
 const SHRINK_DISTANCE = 120;
 
 export const APP_HEADER_HEIGHT = BASE_HEADER_HEIGHT;
@@ -90,7 +90,6 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
         },
         safeArea: {
           height: totalHeight,
-          paddingTop: insets.top,
           paddingHorizontal: spacing(2),
           backgroundColor: surfaceColor,
           borderBottomWidth: StyleSheet.hairlineWidth,
@@ -107,7 +106,7 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
         },
         headerContainer: {
           height: BASE_HEADER_HEIGHT,
-          flexDirection: I18nManager.isRTL ? "row" : "row-reverse",
+          flexDirection: I18nManager.isRTL ? "row-reverse" : "row",
           alignItems: "center",
           justifyContent: "space-between",
           paddingHorizontal: spacing(1.5),
