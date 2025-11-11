@@ -27,6 +27,7 @@ export default function HomeScreen() {
       "/settings",
       "/login",
       "/post/create",
+      "/scoop-forum",
       ...categories.map((category) => ({
         pathname: "/forum/[category]",
         params: { category: category.key, title: category.label },

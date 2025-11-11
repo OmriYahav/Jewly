@@ -10,7 +10,7 @@ import * as Updates from "expo-updates";
 import CustomDrawerContent from "./navigation/CustomDrawerContent";
 import { ForumProvider } from "../src/context/ForumContext";
 import { AppearanceProvider, useAppearance } from "../src/context/AppearanceContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Provider as PaperProvider } from "react-native-paper";
 
 function AppDrawer() {
@@ -57,6 +57,16 @@ function AppDrawer() {
           options={{
             drawerLabel: "ראשי",
             title: "בית",
+          }}
+        />
+        <Drawer.Screen
+          name="scoop-forum"
+          options={{
+            drawerLabel: "סקופים",
+            title: "סקופים",
+            drawerIcon: ({ color, size }) => (
+              <Ionicons name="megaphone-outline" color={color} size={size} />
+            ),
           }}
         />
         <Drawer.Screen
