@@ -2,11 +2,11 @@ import { useCallback, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import Header from "./components/Header";
-import ScreenContainer from "./components/layout/ScreenContainer";
+import { withScreenWrapper } from "./components/layout/ScreenWrapper";
 import { useResponsiveValues } from "../src/hooks/useResponsiveValues";
 import { useAppearance } from "../src/context/AppearanceContext";
 
-export default function LoginScreen() {
+function LoginScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
@@ -27,7 +27,7 @@ export default function LoginScreen() {
   }, [router]);
 
   return (
-    <ScreenContainer>
+    <>
       <Header title="התחברות" subtitle="הזן פרטי משתמש" />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -137,6 +137,8 @@ export default function LoginScreen() {
           </View>
         </View>
       </KeyboardAvoidingView>
-    </ScreenContainer>
+    </>
   );
 }
+
+export default withScreenWrapper(LoginScreen);
