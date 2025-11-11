@@ -10,6 +10,7 @@ import {
 import { useNavigation } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import ScreenContainer from "./ScreenContainer";
+import { useAppearance } from "../../../src/context/AppearanceContext";
 
 function ScreenWrapper({
   children,
@@ -19,15 +20,27 @@ function ScreenWrapper({
   dismissKeyboard = true,
 }) {
   const navigation = useNavigation();
-  const fadeAnimation = useRef(new Animated.Value(0)).current;
+  const { isDarkMode } = useAppearance();
+  const fadeAnimation = useRef(new Animated.Value(isDarkMode ? 0.82 : 0.9)).current;
+  const translateAnimation = useRef(new Animated.Value(18)).current;
 
   useEffect(() => {
-    Animated.timing(fadeAnimation, {
-      toValue: 1,
-      duration: 320,
-      useNativeDriver: true,
-    }).start();
-  }, [fadeAnimation]);
+    fadeAnimation.setValue(isDarkMode ? 0.82 : 0.9);
+    translateAnimation.setValue(isDarkMode ? 22 : 18);
+
+    Animated.parallel([
+      Animated.timing(fadeAnimation, {
+        toValue: 1,
+        duration: 320,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateAnimation, {
+        toValue: 0,
+        duration: 420,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [fadeAnimation, isDarkMode, translateAnimation]);
 
   useFocusEffect(
     useCallback(() => {
@@ -56,7 +69,16 @@ function ScreenWrapper({
   }, [dismissKeyboard]);
 
   const content = (
-    <Animated.View style={[{ flex: 1, opacity: fadeAnimation }, contentStyle]}>
+    <Animated.View
+      style={[
+        {
+          flex: 1,
+          opacity: fadeAnimation,
+          transform: [{ translateY: translateAnimation }],
+        },
+        contentStyle,
+      ]}
+    >
       <View style={{ flex: 1 }}>{children}</View>
     </Animated.View>
   );

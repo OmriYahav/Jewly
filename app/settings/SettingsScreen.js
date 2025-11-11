@@ -1,6 +1,6 @@
-import { useCallback, useMemo, useRef } from "react";
-import { Animated, View, Text, StyleSheet } from "react-native";
-import { Button, Divider } from "react-native-paper";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { Animated, Pressable, StyleSheet, Switch, Text, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import Slider from "@react-native-community/slider";
 import AppHeader from "../../components/AppHeader";
 import { withScreenWrapper } from "../components/layout/ScreenWrapper";
@@ -33,6 +33,7 @@ function SettingsScreen() {
     setRowHighlight,
     textScale,
     setTextScale,
+    shadow,
   } = appearance;
   const scrollY = useRef(new Animated.Value(0)).current;
   const { cardRadius } = useResponsiveValues();
@@ -41,84 +42,168 @@ function SettingsScreen() {
     () =>
       StyleSheet.create({
         scrollContent: {
-          paddingHorizontal: spacing(2),
+          paddingHorizontal: spacing(2.5),
           paddingBottom: spacing(6),
           alignItems: "center",
-          gap: spacing(2),
+          gap: spacing(3),
         },
         card: {
-          backgroundColor: colors.surface,
+          backgroundColor: colors.surfaceElevated ?? colors.surface,
           borderRadius: cardRadius,
-          padding: spacing(2),
+          paddingVertical: spacing(3),
+          paddingHorizontal: spacing(3),
           borderWidth: 1,
-          borderColor: colors.divider,
-          shadowColor: "#ccc",
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.25,
-          shadowRadius: 16,
-          elevation: 4,
-          gap: spacing(2),
+          borderColor: colors.cardBorder ?? colors.divider,
+          gap: spacing(2.5),
           width: "100%",
-          maxWidth: 520,
+          maxWidth: 560,
+          ...shadow.card,
+        },
+        sectionHeader: {
+          alignItems: "center",
+          gap: spacing(0.5),
         },
         sectionTitle: {
           color: colors.text,
           fontSize: fonts.title + 2,
-          fontWeight: "700",
-          textAlign: "right",
+          fontWeight: "600",
+          textAlign: "center",
           fontFamily,
+          letterSpacing: 0.2,
         },
         sectionSubtitle: {
           color: colors.textMuted,
-          fontSize: fonts.meta,
-          textAlign: "right",
+          fontSize: fonts.meta + 1,
+          textAlign: "center",
+          opacity: 0.7,
           fontFamily,
+          lineHeight: (fonts.meta + 1) * 1.5,
         },
-        buttonRow: {
+        optionRow: {
           flexDirection: "row-reverse",
+          flexWrap: "wrap",
+          justifyContent: "center",
           gap: spacing(1),
         },
-        button: {
-          flex: 1,
+        optionButton: {
           borderRadius: radius.md,
           borderWidth: 1,
+          borderColor: colors.cardBorder ?? colors.divider,
+          backgroundColor: colors.surface,
+          overflow: "hidden",
+          minWidth: 108,
+          minHeight: 48,
+          ...shadow.card,
         },
-        divider: {
-          height: 1,
-          backgroundColor: colors.divider,
+        optionGradient: {
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          paddingVertical: spacing(1.25),
+          paddingHorizontal: spacing(2.25),
+        },
+        optionInner: {
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          paddingVertical: spacing(1.25),
+          paddingHorizontal: spacing(2.25),
+          backgroundColor: colors.surface,
+        },
+        optionLabel: {
+          color: colors.text,
+          fontSize: fonts.body,
+          fontWeight: "500",
+          fontFamily,
+          textAlign: "center",
+          letterSpacing: 0.2,
+        },
+        optionLabelSelected: {
+          color: "#FFFFFF",
+        },
+        sectionDivider: {
+          height: StyleSheet.hairlineWidth,
+          backgroundColor: colors.cardBorder ?? colors.divider,
+          opacity: 0.35,
         },
         sliderContainer: {
-          marginTop: spacing(1),
+          gap: spacing(1),
+          alignItems: "center",
         },
         sliderValue: {
-          color: colors.brand,
-          fontSize: fonts.meta,
-          fontWeight: "700",
-          textAlign: "left",
+          color: colors.accent ?? colors.brand,
+          fontSize: fonts.meta + 2,
+          fontWeight: "600",
+          textAlign: "center",
           fontFamily,
+          letterSpacing: 0.3,
         },
         previewContainer: {
           backgroundColor: colors.subtleBackground,
-          borderRadius: radius.md,
-          padding: spacing(2),
+          borderRadius: radius.lg,
+          padding: spacing(2.5),
+          borderWidth: 1,
+          borderColor: colors.highlightBorder,
+          gap: spacing(1.25),
         },
         previewTitle: {
           color: colors.textMuted,
           fontSize: fonts.meta,
-          textAlign: "right",
-          marginBottom: spacing(1),
+          textAlign: "center",
+          opacity: 0.7,
           fontFamily,
+          letterSpacing: 0.2,
         },
         previewText: {
           color: colors.text,
           fontSize: fonts.body + 2,
           lineHeight: (fonts.body + 2) * 1.5,
-          textAlign: "right",
+          textAlign: "center",
           fontWeight: "500",
           fontFamily,
         },
+        switchRow: {
+          width: "100%",
+          flexDirection: "row-reverse",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: spacing(2),
+        },
+        switchLabel: {
+          flex: 1,
+          color: colors.text,
+          fontSize: fonts.body,
+          fontWeight: "500",
+          fontFamily,
+          textAlign: "right",
+        },
+        switchWrapper: {
+          borderRadius: radius.md,
+          padding: spacing(0.25),
+          backgroundColor: colors.iconBackground,
+        },
       }),
-    [cardRadius, colors.brand, colors.divider, colors.subtleBackground, colors.surface, colors.text, colors.textMuted, fontFamily, fonts.body, fonts.meta, fonts.title, radius.md, spacing]
+    [
+      cardRadius,
+      colors.accent,
+      colors.cardBorder,
+      colors.divider,
+      colors.highlightBorder,
+      colors.iconBackground,
+      colors.subtleBackground,
+      colors.surface,
+      colors.surfaceElevated,
+      colors.text,
+      colors.textMuted,
+      fontFamily,
+      fonts.body,
+      fonts.meta,
+      fonts.title,
+      radius.lg,
+      radius.md,
+      shadow.card,
+      spacing,
+    ]
   );
 
   const handleThemeChange = useCallback(
@@ -147,34 +232,77 @@ function SettingsScreen() {
 
   const sliderLabel = `${Math.round(textScale * 100)}%`;
 
+  const highlightOptions = useMemo(
+    () => ROW_HIGHLIGHT_OPTIONS.filter((option) => option.value !== "none"),
+    []
+  );
+  const isHighlightEnabled = rowHighlight !== "none";
+  const lastHighlightRef = useRef(rowHighlight === "none" ? "side-line" : rowHighlight);
+
+  useEffect(() => {
+    if (rowHighlight !== "none") {
+      lastHighlightRef.current = rowHighlight;
+    }
+  }, [rowHighlight]);
+
+  const handleHighlightToggle = useCallback(
+    (value) => {
+      if (!value) {
+        setRowHighlight("none");
+        return;
+      }
+      const fallback = lastHighlightRef.current ?? "side-line";
+      setRowHighlight(fallback === "none" ? "side-line" : fallback);
+    },
+    [setRowHighlight]
+  );
+
   const renderOptionButtons = useCallback(
     (options, selected, onSelect) =>
       options.map((option) => {
         const isSelected = option.value === selected;
+        const gradientColors = [colors.accent ?? colors.brand, colors.accentSecondary ?? colors.accent ?? colors.brand];
+
         return (
-          <Button
+          <Pressable
             key={option.value}
-            mode={isSelected ? "contained" : "outlined"}
             onPress={onSelect(option.value)}
-            buttonColor={isSelected ? colors.highlight : colors.surface}
-            textColor={isSelected ? colors.brand : colors.text}
-            style={[
-              styles.button,
-              {
-                borderColor: isSelected ? colors.highlightBorder : colors.divider,
-              },
+            style={({ pressed }) => [
+              styles.optionButton,
+              isSelected && { borderColor: colors.highlightBorder, ...shadow.glow },
+              pressed && { opacity: 0.9 },
             ]}
-            labelStyle={{
-              fontSize: fonts.body,
-              fontWeight: isSelected ? "700" : "500",
-              fontFamily,
-            }}
+            accessibilityRole="button"
           >
-            {option.label}
-          </Button>
+            {isSelected ? (
+              <LinearGradient
+                colors={gradientColors}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.optionGradient}
+              >
+                <Text style={[styles.optionLabel, styles.optionLabelSelected]}>{option.label}</Text>
+              </LinearGradient>
+            ) : (
+              <View style={styles.optionInner}>
+                <Text style={styles.optionLabel}>{option.label}</Text>
+              </View>
+            )}
+          </Pressable>
         );
       }),
-    [colors.brand, colors.divider, colors.highlight, colors.highlightBorder, colors.surface, colors.text, fonts.body, styles.button]
+    [
+      colors.accent,
+      colors.accentSecondary,
+      colors.brand,
+      colors.highlightBorder,
+      shadow.glow,
+      styles.optionButton,
+      styles.optionGradient,
+      styles.optionInner,
+      styles.optionLabel,
+      styles.optionLabelSelected,
+    ]
   );
 
   return (
@@ -191,22 +319,43 @@ function SettingsScreen() {
         scrollEventThrottle={16}
       >
         <View style={styles.card}>
-          <Text style={styles.sectionTitle}>ערכת נושא</Text>
-          <Text style={styles.sectionSubtitle}>בחירת מצב תצוגה לאפליקציה</Text>
-          <View style={styles.buttonRow}>{renderOptionButtons(THEME_OPTIONS, themeMode, handleThemeChange)}</View>
-
-          <Divider style={styles.divider} />
-
-          <Text style={styles.sectionTitle}>צביעת שרשורים</Text>
-          <Text style={styles.sectionSubtitle}>אופן הדגשת תגובות בשרשור</Text>
-          <View style={styles.buttonRow}>
-            {renderOptionButtons(ROW_HIGHLIGHT_OPTIONS, rowHighlight, handleHighlightChange)}
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>ערכת נושא</Text>
+            <Text style={styles.sectionSubtitle}>בחירת מצב תצוגה לאפליקציה</Text>
           </View>
+          <View style={styles.optionRow}>{renderOptionButtons(THEME_OPTIONS, themeMode, handleThemeChange)}</View>
 
-          <Divider style={styles.divider} />
+          <View style={styles.sectionDivider} />
 
-          <Text style={styles.sectionTitle}>גודל טקסט</Text>
-          <Text style={styles.sectionSubtitle}>התאמת גודל הטקסט בפוסטים ותגובות</Text>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>צביעת שרשורים</Text>
+            <Text style={styles.sectionSubtitle}>אופן הדגשת תגובות בשרשור</Text>
+          </View>
+          <View style={styles.switchRow}>
+            <Text style={styles.switchLabel}>הפעל הדגשה</Text>
+            <View style={[styles.switchWrapper, isHighlightEnabled && shadow.glow]}>
+              <Switch
+                value={isHighlightEnabled}
+                onValueChange={handleHighlightToggle}
+                trackColor={{ false: colors.cardBorder ?? colors.divider, true: colors.highlight }}
+                thumbColor={isHighlightEnabled ? colors.accent ?? colors.brand : colors.surface}
+                ios_backgroundColor={colors.cardBorder ?? colors.divider}
+                accessibilityLabel="הפעל הדגשת שרשורים"
+              />
+            </View>
+          </View>
+          {isHighlightEnabled ? (
+            <View style={styles.optionRow}>
+              {renderOptionButtons(highlightOptions, rowHighlight === "none" ? "side-line" : rowHighlight, handleHighlightChange)}
+            </View>
+          ) : null}
+
+          <View style={styles.sectionDivider} />
+
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>גודל טקסט</Text>
+            <Text style={styles.sectionSubtitle}>התאמת גודל הטקסט בפוסטים ותגובות</Text>
+          </View>
           <View style={styles.sliderContainer}>
             <Slider
               value={textScale}
@@ -214,17 +363,21 @@ function SettingsScreen() {
               minimumValue={0.8}
               maximumValue={1.3}
               step={0.01}
+              minimumTrackTintColor={colors.accent ?? colors.brand}
+              maximumTrackTintColor={colors.cardBorder ?? colors.divider}
+              thumbTintColor={colors.accent ?? colors.brand}
+              style={{ width: "100%" }}
             />
             <Text style={styles.sliderValue}>{sliderLabel}</Text>
           </View>
 
-          <Divider style={styles.divider} />
+          <View style={styles.sectionDivider} />
 
           <View style={styles.previewContainer}>
-            <Text style={styles.previewTitle}>דוגמא לטקסט</Text>
+            <Text style={styles.previewTitle}>דוגמה לטקסט</Text>
             <Text style={styles.previewText}>
-              זו דוגמת טקסט המציגה את גודל הגופן והניגודיות החדשה. שינויי העיצוב חלים מיד על כל
-              המסכים באפליקציה.
+              זו דוגמת טקסט המציגה את גודל הגופן והניגודיות החדשה. שינויי העיצוב חלים מיד על כל המסכים
+              באפליקציה.
             </Text>
           </View>
         </View>

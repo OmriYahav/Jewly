@@ -12,7 +12,7 @@ const PostCard = memo(function PostCard({
   onPress,
   index = 0,
 }) {
-  const { colors, spacing, radius, fonts, fontFamily } = useAppearance();
+  const { colors, spacing, radius, fonts, fontFamily, shadow } = useAppearance();
   const mountAnimation = useRef(new Animated.Value(0)).current;
   const pressAnimation = useRef(new Animated.Value(0)).current;
 
@@ -73,27 +73,30 @@ const PostCard = memo(function PostCard({
     () =>
       StyleSheet.create({
         container: {
-          marginBottom: spacing(2),
+          marginBottom: spacing(2.5),
           borderRadius: radius.lg,
           backgroundColor: colors.card,
           borderWidth: 1,
           borderColor: colors.cardBorder ?? colors.divider,
           overflow: "hidden",
+          ...shadow.card,
         },
         pressable: {
-          paddingVertical: spacing(2),
-          paddingHorizontal: spacing(2.5),
+          paddingVertical: spacing(2.25),
+          paddingHorizontal: spacing(2.75),
           flexDirection: "column",
           rowGap: spacing(1.5),
+          backgroundColor: colors.surfaceElevated ?? colors.card,
+          minHeight: 48,
         },
         pressed: {
-          opacity: 0.95,
+          opacity: 0.92,
         },
         badge: {
           alignSelf: "flex-start",
-          backgroundColor: colors.badgeBackground,
+          backgroundColor: colors.highlight,
           paddingVertical: spacing(0.5),
-          paddingHorizontal: spacing(1.5),
+          paddingHorizontal: spacing(1.75),
           borderRadius: radius.md,
         },
         badgeText: {
@@ -105,21 +108,23 @@ const PostCard = memo(function PostCard({
         tag: {
           color: colors.textMuted,
           fontSize: fonts.meta,
+          lineHeight: fonts.meta * 1.5,
           fontFamily,
           textAlign: "right",
         },
         title: {
           color: colors.text,
-          fontSize: fonts.title + 1,
-          fontWeight: "700",
-          lineHeight: (fonts.title + 1) * 1.4,
+          fontSize: fonts.title + 2,
+          fontWeight: "600",
+          lineHeight: (fonts.title + 2) * 1.5,
           textAlign: "right",
           fontFamily,
         },
         author: {
-          color: colors.link,
+          color: colors.accent ?? colors.link,
           fontSize: fonts.body,
-          fontWeight: "700",
+          fontWeight: "600",
+          lineHeight: fonts.body * 1.5,
           textAlign: "right",
           fontFamily,
         },
@@ -137,10 +142,28 @@ const PostCard = memo(function PostCard({
         metaText: {
           color: colors.textMuted,
           fontSize: fonts.meta,
+          lineHeight: fonts.meta * 1.5,
           fontFamily,
         },
       }),
-    [colors.badgeBackground, colors.badgeText, colors.card, colors.cardBorder, colors.link, colors.text, colors.textMuted, fonts.body, fonts.meta, fonts.title, fontFamily, radius.lg, radius.md, spacing]
+    [
+      colors.accent,
+      colors.badgeText,
+      colors.card,
+      colors.cardBorder,
+      colors.highlight,
+      colors.surfaceElevated,
+      colors.text,
+      colors.textMuted,
+      fonts.body,
+      fonts.meta,
+      fonts.title,
+      fontFamily,
+      radius.lg,
+      radius.md,
+      shadow.card,
+      spacing,
+    ]
   );
 
   const showSpecialBadge = tagLabel?.trim?.() === "דיווח מיוחד";
@@ -166,11 +189,19 @@ const PostCard = memo(function PostCard({
         {author ? <Text style={styles.author}>{author}</Text> : null}
         <View style={styles.metaRow}>
           <View style={styles.metaItem}>
-            <MaterialCommunityIcons name="eye-outline" size={18} color={colors.link} />
+            <MaterialCommunityIcons
+              name="eye-outline"
+              size={18}
+              color={colors.accent ?? colors.link}
+            />
             <Text style={styles.metaText}>{Number(views).toLocaleString("he-IL")}</Text>
           </View>
           <View style={styles.metaItem}>
-            <MaterialCommunityIcons name="message-text-outline" size={18} color={colors.success} />
+            <MaterialCommunityIcons
+              name="message-text-outline"
+              size={18}
+              color={colors.success}
+            />
             <Text style={styles.metaText}>{Number(comments).toLocaleString("he-IL")}</Text>
           </View>
         </View>
