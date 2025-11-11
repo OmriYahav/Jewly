@@ -17,7 +17,8 @@ import { useForum } from "../src/context/ForumContext";
 import SearchModal from "./SearchModal";
 
 const WINDOW_HEIGHT = Dimensions.get("window").height || 0;
-const BASE_HEADER_HEIGHT = Math.min(64, Math.max(48, WINDOW_HEIGHT * 0.08));
+const ORIGINAL_BASE_HEADER_HEIGHT = Math.min(64, Math.max(48, WINDOW_HEIGHT * 0.08));
+const BASE_HEADER_HEIGHT = Math.max(24, Math.round(ORIGINAL_BASE_HEADER_HEIGHT / 3));
 const SHRINK_DISTANCE = 120;
 
 export const APP_HEADER_HEIGHT = BASE_HEADER_HEIGHT;
@@ -89,7 +90,7 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
           elevation: 3,
         },
         safeArea: {
-          height: totalHeight,
+          minHeight: totalHeight,
           paddingHorizontal: spacing(2),
           backgroundColor: surfaceColor,
           borderBottomWidth: StyleSheet.hairlineWidth,
@@ -105,11 +106,11 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
           }),
         },
         headerContainer: {
-          height: BASE_HEADER_HEIGHT,
-          flexDirection: I18nManager.isRTL ? "row-reverse" : "row",
+          minHeight: BASE_HEADER_HEIGHT,
+          flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
-          paddingHorizontal: spacing(1.5),
+          paddingHorizontal: spacing(1),
         },
         titleBlock: {
           flex: 1,
@@ -118,7 +119,8 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
         },
         title: {
           color: titleColor,
-          fontSize: fonts.title + 4,
+          fontSize: Math.max(14, fonts.title - 2),
+          lineHeight: Math.max(16, fonts.title),
           fontWeight: "700",
           textAlign: "center",
           letterSpacing: 0.3,
@@ -126,35 +128,55 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
         },
         tagline: {
           color: taglineColor,
-          fontSize: 12,
+          fontSize: 9,
+          lineHeight: 11,
           fontWeight: "300",
           textAlign: "center",
-          marginTop: 2,
+          marginTop: 0,
           fontFamily,
         },
         subtitle: {
           color: taglineColor,
-          fontSize: fonts.meta,
+          fontSize: Math.max(10, fonts.meta - 1),
+          lineHeight: Math.max(12, fonts.meta),
           fontWeight: "400",
           textAlign: "center",
-          marginTop: 2,
+          marginTop: 0,
           fontFamily,
         },
         iconButton: {
-          width: 40,
-          height: 40,
-          borderRadius: 20,
+          width: 26,
+          height: 26,
+          borderRadius: 13,
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: isDarkMode
             ? "rgba(255,255,255,0.08)"
             : "rgba(0,0,0,0.04)",
         },
+        leftControls: {
+          width: 48,
+          alignItems: "flex-start",
+          justifyContent: "center",
+        },
+        rightControls: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          width: 96,
+        },
+        spacer: {
+          width: 26,
+          height: 26,
+        },
+        searchButton: {
+          marginRight: spacing(0.75),
+        },
         iconText: {
           color: iconColor,
         },
         placeholder: {
-          height: totalHeight,
+          minHeight: totalHeight,
         },
       }),
     [
@@ -211,21 +233,27 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
       >
         <AnimatedSafeAreaView edges={["top", "left", "right"]} style={styles.safeArea}>
           <Animated.View style={[styles.headerContainer, { transform: [{ scale: headerScale }] }]}> 
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={navigation?.canGoBack?.() ? handleGoBack : handleToggleDrawer}
-              accessibilityRole="button"
-              accessibilityLabel={navigation?.canGoBack?.() ? "חזרה" : "תפריט"}
-              style={styles.iconButton}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <MaterialCommunityIcons
-                name={navigation?.canGoBack?.() ? (I18nManager.isRTL ? "arrow-right" : "arrow-left") : "menu"}
-                size={24}
-                color={iconColor}
-                style={styles.iconText}
-              />
-            </TouchableOpacity>
+            <View style={styles.leftControls}>
+              {navigation?.canGoBack?.() ? (
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={handleGoBack}
+                  accessibilityRole="button"
+                  accessibilityLabel="חזרה"
+                  style={styles.iconButton}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
+                  <MaterialCommunityIcons
+                    name={I18nManager.isRTL ? "arrow-right" : "arrow-left"}
+                    size={20}
+                    color={iconColor}
+                    style={styles.iconText}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.spacer} />
+              )}
+            </View>
 
             <View style={styles.titleBlock}>
               <Text
@@ -240,21 +268,43 @@ const AppHeader = memo(function AppHeader({ title = "Jewly", subtitle, scrollY }
               {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
             </View>
 
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={handleOpenSearch}
-              accessibilityRole="button"
-              accessibilityLabel="חיפוש"
-              style={styles.iconButton}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <MaterialCommunityIcons
-                name="magnify"
-                size={24}
-                color={iconColor}
-                style={styles.iconText}
-              />
-            </TouchableOpacity>
+            <View style={styles.rightControls}>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={handleOpenSearch}
+                accessibilityRole="button"
+                accessibilityLabel="חיפוש"
+                style={[styles.iconButton, styles.searchButton]}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <MaterialCommunityIcons
+                  name="magnify"
+                  size={20}
+                  color={iconColor}
+                  style={styles.iconText}
+                />
+              </TouchableOpacity>
+
+              {navigation?.openDrawer ? (
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={handleToggleDrawer}
+                  accessibilityRole="button"
+                  accessibilityLabel="תפריט"
+                  style={styles.iconButton}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
+                  <MaterialCommunityIcons
+                    name="menu"
+                    size={20}
+                    color={iconColor}
+                    style={styles.iconText}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.spacer} />
+              )}
+            </View>
           </Animated.View>
 
         </AnimatedSafeAreaView>
