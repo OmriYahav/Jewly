@@ -3,12 +3,12 @@ import { FlatList, Text, View, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import Header from "./components/Header";
 import ThreadCard from "./components/ThreadCard";
-import ScreenContainer from "./components/layout/ScreenContainer";
+import { withScreenWrapper } from "./components/layout/ScreenWrapper";
 import { useForum } from "../src/context/ForumContext";
 import { usePreloadScreens } from "../src/hooks/usePreloadScreens";
 import { useAppearance } from "../src/context/AppearanceContext";
 
-export default function HomeScreen() {
+function HomeScreen() {
   const router = useRouter();
   const { posts, categories } = useForum();
   const { colors, spacing, radius, fonts } = useAppearance();
@@ -66,7 +66,7 @@ export default function HomeScreen() {
   const keyExtractor = useCallback((item) => item.id, []);
 
   return (
-    <ScreenContainer>
+    <>
       <Header title="רוֹטר.נט – סקופים" subtitle="פורום חדשות ודיונים" />
       <FlatList
         data={posts}
@@ -123,6 +123,8 @@ export default function HomeScreen() {
           כתיבה חדשה
         </Text>
       </TouchableOpacity>
-    </ScreenContainer>
+    </>
   );
 }
+
+export default withScreenWrapper(HomeScreen);

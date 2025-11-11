@@ -10,12 +10,12 @@ import {
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import Header from "../components/Header";
-import ScreenContainer from "../components/layout/ScreenContainer";
+import { withScreenWrapper } from "../components/layout/ScreenWrapper";
 import { useForum } from "../../src/context/ForumContext";
 import { useResponsiveValues } from "../../src/hooks/useResponsiveValues";
 import { useAppearance } from "../../src/context/AppearanceContext";
 
-export default function PostScreen() {
+function PostScreen() {
   const { id } = useLocalSearchParams();
   const { posts, comments: commentsMap, addComment } = useForum();
   const normalizedId = Array.isArray(id) ? id[0] : id;
@@ -75,7 +75,7 @@ export default function PostScreen() {
   }, [colors.highlight, colors.highlightBorder, rowHighlight, spacing]);
 
   return (
-    <ScreenContainer>
+    <>
       <Header title={post?.title ?? "פוסט"} subtitle={`מאת ${post?.author ?? "משתמש"}`} />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -283,6 +283,8 @@ export default function PostScreen() {
           </View>
         </View>
       </KeyboardAvoidingView>
-    </ScreenContainer>
+    </>
   );
 }
+
+export default withScreenWrapper(PostScreen);

@@ -10,12 +10,12 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Header from "../components/Header";
-import ScreenContainer from "../components/layout/ScreenContainer";
+import { withScreenWrapper } from "../components/layout/ScreenWrapper";
 import { useForum } from "../../src/context/ForumContext";
 import { useResponsiveValues } from "../../src/hooks/useResponsiveValues";
 import { useAppearance } from "../../src/context/AppearanceContext";
 
-export default function CreatePostScreen() {
+function CreatePostScreen() {
   const router = useRouter();
   const { category } = useLocalSearchParams();
   const { categories, createPost } = useForum();
@@ -65,7 +65,7 @@ export default function CreatePostScreen() {
   }, [author, content, createPost, isValid, router, selectedCategory, tag, title]);
 
   return (
-    <ScreenContainer>
+    <>
       <Header title="פוסט חדש" subtitle="הוסיפו דיון לקהילה" />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -295,6 +295,8 @@ export default function CreatePostScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </ScreenContainer>
+    </>
   );
 }
+
+export default withScreenWrapper(CreatePostScreen);

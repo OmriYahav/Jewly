@@ -3,11 +3,11 @@ import { View, FlatList, Text, TouchableOpacity } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Header from "../components/Header";
 import ThreadCard from "../components/ThreadCard";
-import ScreenContainer from "../components/layout/ScreenContainer";
+import { withScreenWrapper } from "../components/layout/ScreenWrapper";
 import { useForum } from "../../src/context/ForumContext";
 import { useAppearance } from "../../src/context/AppearanceContext";
 
-export default function ForumCategoryScreen() {
+function ForumCategoryScreen() {
   const { category } = useLocalSearchParams();
   const router = useRouter();
   const { posts, categories } = useForum();
@@ -50,7 +50,7 @@ export default function ForumCategoryScreen() {
   const keyExtractor = useCallback((item) => item.id, []);
 
   return (
-    <ScreenContainer>
+    <>
       <Header title={forum?.label ?? "פורום"} subtitle="הדיונים החמים ביותר" />
       <View style={{ flex: 1 }}>
         {filteredPosts.length === 0 ? (
@@ -106,16 +106,18 @@ export default function ForumCategoryScreen() {
         accessibilityLabel="פתיחת פוסט חדש"
         activeOpacity={0.9}
       >
-          <Text
-            style={{
-              color: colors.surface,
-              fontWeight: "700",
-              fontSize: fonts.body,
-            }}
-          >
-            פוסט חדש
-          </Text>
+        <Text
+          style={{
+            color: colors.surface,
+            fontWeight: "700",
+            fontSize: fonts.body,
+          }}
+        >
+          פוסט חדש
+        </Text>
       </TouchableOpacity>
-    </ScreenContainer>
+    </>
   );
 }
+
+export default withScreenWrapper(ForumCategoryScreen);

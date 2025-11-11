@@ -3,7 +3,7 @@ import { ScrollView, View, Text, StyleSheet } from "react-native";
 import { Button, Divider } from "react-native-paper";
 import Slider from "@react-native-community/slider";
 import Header from "../components/Header";
-import ScreenContainer from "../components/layout/ScreenContainer";
+import { withScreenWrapper } from "../components/layout/ScreenWrapper";
 import { useAppearance } from "../../src/context/AppearanceContext";
 import { useResponsiveValues } from "../../src/hooks/useResponsiveValues";
 
@@ -19,7 +19,7 @@ const ROW_HIGHLIGHT_OPTIONS = [
   { label: "קו צדדי", value: "side-line" },
 ];
 
-export default function SettingsScreen() {
+function SettingsScreen() {
   const appearance = useAppearance();
   const {
     colors,
@@ -170,7 +170,7 @@ export default function SettingsScreen() {
   );
 
   return (
-    <ScreenContainer>
+    <>
       <Header title="הגדרות" subtitle="התאמה אישית של האפליקציה" />
       <ScrollView
         style={{ flex: 1 }}
@@ -216,6 +216,8 @@ export default function SettingsScreen() {
           </View>
         </View>
       </ScrollView>
-    </ScreenContainer>
+    </>
   );
 }
+
+export default withScreenWrapper(SettingsScreen);

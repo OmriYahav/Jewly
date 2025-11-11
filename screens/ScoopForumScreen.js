@@ -3,11 +3,11 @@ import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import Header from "../app/components/Header";
 import ThreadCard from "../app/components/ThreadCard";
-import ScreenContainer from "../app/components/layout/ScreenContainer";
+import { withScreenWrapper } from "../app/components/layout/ScreenWrapper";
 import { useForum } from "../src/context/ForumContext";
 import { useAppearance } from "../src/context/AppearanceContext";
 
-export default function ScoopForumScreen() {
+function ScoopForumScreen() {
   const router = useRouter();
   const { posts } = useForum();
   const { colors, spacing, radius, fonts } = useAppearance();
@@ -51,7 +51,7 @@ export default function ScoopForumScreen() {
   const keyExtractor = useCallback((item) => item.id, []);
 
   return (
-    <ScreenContainer>
+    <>
       <Header title="סקופים" subtitle="כל הדיווחים החמים בזמן אמת" />
       {scoopPosts.length === 0 ? (
         <View
@@ -109,6 +109,8 @@ export default function ScoopForumScreen() {
           סקופ חדש
         </Text>
       </TouchableOpacity>
-    </ScreenContainer>
+    </>
   );
 }
+
+export default withScreenWrapper(ScoopForumScreen);
